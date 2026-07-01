@@ -43,14 +43,14 @@ export default function ClientLayout({ children }) {
 
   const isRootPath = pathname === '/printer-setup' || pathname === '/printer-setup/';
   const isSettingsPath = pathname?.startsWith('/printer-setup/settings');
-  const hideHeaderOnRoot = isRootPath;
+  const shouldHideHeader = isRootPath || isSettingsPath;
 
   // Prevent flash of subpage content before redirect
   const shouldRenderChildren = isRootPath || isSettingsPath || (settingsLoaded && allowStartNow);
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!hideHeaderOnRoot && showHeader && <PrinterHeader showLogo={showLogo} />}
+      {!shouldHideHeader && showHeader && <PrinterHeader showLogo={showLogo} />}
       <div className="flex-grow">
         {shouldRenderChildren ? children : null}
       </div>
