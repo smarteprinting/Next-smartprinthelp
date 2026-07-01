@@ -1,29 +1,30 @@
 import nodemailer from 'nodemailer';
 
-let transporter = null;
-let supportTransporter = null;
-const initializeTransporter = async () => {
-  if (transporter) return transporter;
+// ─── SS1: no-reply@smartprinthelp.com ─────────────────────────────────────
+// Used for sending OTP emails to users
+// NOTE: Update EMAIL_NOREPLY_PASS in .env.local with the correct password
+// for no-reply@smartprinthelp.com from your hosting control panel.
+// Until then, OTPs are sent via contact@smartprinthelp.com as fallback.
 
-  try {
-    transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT) || 465,
-      secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+let otpTransporter = null;
 
-    return transporter;
-  } catch (error) {
-    console.error('❌ Failed to initialize transporter:', error);
-    throw error;
-  }
+const getOtpTransporter = async () => {
+  if (otpTransporter) return otpTransporter;
+
+  // Try ss1 (no-reply) first, fall back to ss2 (contact) if no dedicated pass set
+  const noreplyPass = process.env.EMAIL_NOREPLY_PASS;
+
+  otpTransporter = nodemailer.createTransport({
+    host: 'mail.smartprinthelp.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: noreplyPass ? 'no-reply@smartprinthelp.com' : 'contact@smartprinthelp.com',
+      pass: noreplyPass || process.env.Form_email_password
+    },
+    tls: { rejectUnauthorized: false }
+  });
+  return otpTransporter;
 };
 
 export const generateOTP = () => {
@@ -32,12 +33,12 @@ export const generateOTP = () => {
 
 export const sendOTPEmail = async (email, otp, type = 'registration') => {
   try {
-    const trans = await initializeTransporter();
-    
-    const subject = type === 'registration' 
-      ? 'Verify Your Account - Smart Print Help' 
+    const trans = await getOtpTransporter();
+
+    const subject = type === 'registration'
+      ? 'Verify Your Account - Smart Print Help'
       : 'Reset Your Password - Smart Print Help';
-    
+
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center; border-radius: 10px 10px 0 0;">
@@ -70,8 +71,12 @@ export const sendOTPEmail = async (email, otp, type = 'registration') => {
       </div>
     `;
 
+    const senderEmail = process.env.EMAIL_NOREPLY_PASS
+      ? 'no-reply@smartprinthelp.com'
+      : 'contact@smartprinthelp.com';
+
     const result = await trans.sendMail({
-      from: `"Smart Print Help" <${process.env.OTP_EMAIL_FROM || process.env.EMAIL_FROM || 'no-reply@smartprinthelp.com'}>`,
+      from: `"Smart Print Help" <${senderEmail}>`,
       to: email,
       subject,
       html
@@ -80,42 +85,38 @@ export const sendOTPEmail = async (email, otp, type = 'registration') => {
     console.log('✅ OTP email sent:', result.messageId);
     return result;
   } catch (error) {
-    console.error('❌ Email sending failed:', error);
+    console.error('❌ OTP email sending failed (ss1):', error);
     console.log('🔧 DEV MODE: OTP is:', otp, '- Use this for testing if email fails');
     return { messageId: 'error-fallback', error: error.message };
   }
 };
 
-const initializeSupportTransporter = async () => {
-  if (supportTransporter) return supportTransporter;
+// ─── SS2: contact@smartprinthelp.com ──────────────────────────────────────
+// Used for receiving form data (contact forms, printer setup registrations, etc.)
 
-  try {
-    supportTransporter = nodemailer.createTransport({
-      host: 'mail.smartprinthelp.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'support@smartprinthelp.com',
-        pass: process.env.Form_email_password
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+let contactTransporter = null;
 
-    return supportTransporter;
-  } catch (error) {
-    console.error('❌ Failed to initialize support transporter:', error);
-    throw error;
-  }
+const getContactTransporter = async () => {
+  if (contactTransporter) return contactTransporter;
+  contactTransporter = nodemailer.createTransport({
+    host: 'mail.smartprinthelp.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: 'contact@smartprinthelp.com',
+      pass: process.env.Form_email_password
+    },
+    tls: { rejectUnauthorized: false }
+  });
+  return contactTransporter;
 };
 
 export const sendEmail = async ({ to, subject, html, text, from, replyTo }) => {
   try {
-    const trans = await initializeSupportTransporter();
+    const trans = await getContactTransporter();
 
     const result = await trans.sendMail({
-      from: from || `"Smart Print Help Support" <support@smartprinthelp.com>`,
+      from: from || '"Smart Print Help" <contact@smartprinthelp.com>',
       to,
       replyTo,
       subject,
@@ -123,9 +124,10 @@ export const sendEmail = async ({ to, subject, html, text, from, replyTo }) => {
       html
     });
 
+    console.log('✅ Contact/form email sent via ss2:', result.messageId);
     return result;
   } catch (error) {
-    console.error('❌ Contact email sending failed:', error);
+    console.error('❌ Contact/form email sending failed (ss2):', error);
     throw error;
   }
 };

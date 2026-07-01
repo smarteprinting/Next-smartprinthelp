@@ -111,9 +111,8 @@ ${message}
         subject,
         html,
         text,
-        from: `"${fromName}" <${
-          process.env.EMAIL_FROM || 'support@smartprinthelp.com'
-        }>`,
+        from: `"${fromName}" <${process.env.EMAIL_FROM || 'no-reply@smartprinthelp.com'
+          }>`,
         replyTo: replyToEmail,
       });
 
