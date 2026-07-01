@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /profile
+Disallow: /admin/*
+Disallow: /printer-setup/settings/
+Disallow: /printer-setup/settings
+
+Sitemap: https://www.smartprinthelp.com/sitemap.xml
