@@ -1,22 +1,26 @@
 "use client";
 import React, { useState } from 'react';
+import api from '@/lib/api';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     number: '',
+    subject: '',
     message: '',
     save: false
   });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState('');
 
   const validate = () => {
     const newError = {};
     if (!formData.name.trim()) newError.name = true;
     if (!formData.email.trim()) newError.email = true;
     if (!formData.number.trim()) newError.number = true;
+    if (!formData.subject.trim()) newError.subject = true;
     if (!formData.message.trim()) newError.message = true;
     setError(newError);
     return Object.keys(newError).length === 0;
@@ -29,21 +33,37 @@ const ContactForm = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
     if (error[name]) setError(prev => ({ ...prev, [name]: false }));
+    setSuccess('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    setTimeout(() => {
+    setSuccess('');
+    setError({});
+    try {
+      await api.post('/contact', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.number,
+        subject: formData.subject,
+        message: formData.message
+      });
+      setSuccess('Message sent successfully!');
+      setFormData({ name: '', email: '', number: '', subject: '', message: '', save: false });
+    } catch (err) {
+      console.error('Contact form error:', err);
+      setError({ submit: err.message || 'Failed to send message. Please try again.' });
+    } finally {
       setLoading(false);
-      setFormData({ name: '', email: '', number: '', message: '', save: false });
-      setError({});
-    }, 1200);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {success && <p className="text-green-600 text-base font-medium">{success}</p>}
+      {error.submit && <p className="text-red-500 text-base font-medium">{error.submit}</p>}
       <div>
         <input
           type="text"
@@ -72,10 +92,21 @@ const ContactForm = () => {
           name="number"
           value={formData.number}
           onChange={handleChange}
-          placeholder="Number *"
+          placeholder="Phone Number *"
           className={`w-full px-4 py-3 border rounded focus:outline-none text-base ${error.number ? 'border-red-400' : 'border-gray-300'}`}
         />
         {error.number && <p className="text-red-500 text-sm mt-1">This field is required.</p>}
+      </div>
+      <div>
+        <input
+          type="text"
+          name="subject"
+          value={formData.subject}
+          onChange={handleChange}
+          placeholder="Subject *"
+          className={`w-full px-4 py-3 border rounded focus:outline-none text-base ${error.subject ? 'border-red-400' : 'border-gray-300'}`}
+        />
+        {error.subject && <p className="text-red-500 text-sm mt-1">This field is required.</p>}
       </div>
       <div>
         <textarea
@@ -97,7 +128,7 @@ const ContactForm = () => {
           onChange={handleChange}
           className="accent-[#EF4056] w-4 h-4"
         />
-        <label htmlFor="save" className="text-base text-gray-800 select-none">Save my name, email and website in this browser</label>
+        <label htmlFor="save" className="text-base text-gray-800 select-none">Save my name, email and phone in this browser</label>
       </div>
       <button
         type="submit"

@@ -70,7 +70,7 @@ ${additionalDetails || 'None provided'}
       `;
     } else {
       // DEFAULT CONTACT FORM
-      const { name, email, orderNumber, subject: reqSubject, message } = body;
+      const { name, email, phone, orderNumber, subject: reqSubject, message } = body;
 
       if (!name || !email || !reqSubject || !message) {
         return errorResponse(
@@ -85,6 +85,7 @@ ${additionalDetails || 'None provided'}
       text = `
 Name: ${name}
 Email: ${email}
+Phone: ${phone || 'N/A'}
 Order Number: ${orderNumber || 'N/A'}
 Subject: ${reqSubject}
 
@@ -95,6 +96,7 @@ ${message}
 <h3>New Contact Form Submission</h3>
 <p><strong>Name:</strong> ${name}</p>
 <p><strong>Email:</strong> ${email}</p>
+<p><strong>Phone:</strong> ${phone || 'N/A'}</p>
 <p><strong>Order Number:</strong> ${orderNumber || 'N/A'}</p>
 <p><strong>Subject:</strong> ${reqSubject}</p>
 <p><strong>Message:</strong></p>
