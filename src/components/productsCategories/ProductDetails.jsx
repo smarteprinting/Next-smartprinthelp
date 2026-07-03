@@ -1,6 +1,7 @@
 "use client";
+import 'react-quill-new/dist/quill.snow.css';
 import { X } from 'lucide-react';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -427,8 +428,37 @@ const handleWriteReview = () => {
                                     {product.description}
                                 </p>
                                 {product.overview && (
-                                    <div dangerouslySetInnerHTML={{ __html: product.overview }} className="prose prose-slate text-slate-600 prose-sm md:prose-base max-w-5xl overflow-hidden break-words whitespace-normal" />
+                                    // If overview looks like HTML, clean up empty <p> and nested <p> nodes before rendering.
+                                    /<[a-z][\s\S]*>/i.test(product.overview) ? (
+                                        <div className="ql-snow max-w-5xl rounded-xl">
+                                            <div className="ql-editor prose prose-slate text-slate-600 prose-sm md:prose-base break-words whitespace-normal list-disc list-inside p-0" dangerouslySetInnerHTML={{ __html: (function(html){
+                                                try {
+                                                    const doc = new DOMParser().parseFromString(html, 'text/html');
+                                                    // Remove <p> that contain only whitespace or &nbsp;
+                                                    const ps = Array.from(doc.querySelectorAll('p'));
+                                                    ps.forEach(p => {
+                                                        const text = p.textContent ? p.textContent.replace(/\u00A0/g, '').trim() : '';
+                                                        if (!text) p.remove();
+                                                    });
+                                                    // Unwrap nested <p> inside other <p>
+                                                    const nested = Array.from(doc.querySelectorAll('p p'));
+                                                    nested.forEach(inner => {
+                                                        const parent = inner.parentElement;
+                                                        if (parent) parent.replaceChild(document.createTextNode(inner.textContent || ''), inner);
+                                                    });
+                                                    return doc.body.innerHTML;
+                                                } catch (e) {
+                                                    return html;
+                                                }
+                                            })(product.overview) }} />
+                                        </div>
+                                    ) : (
+                                        <div className="prose prose-slate text-slate-600 prose-sm md:prose-base max-w-5xl break-words whitespace-pre-wrap list-disc list-inside">
+                                            {product.overview}
+                                        </div>
+                                    )
                                 )}
+
                             </div>
                         )}
 

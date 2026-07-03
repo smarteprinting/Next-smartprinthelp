@@ -7,6 +7,22 @@ import Category from '@/models/Category';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import mongoose from 'mongoose';
 
+// Same normalization as in POST: convert <p> blocks to <br/> sequences before saving updates
+const normalizeOverviewForSaving = (html) => {
+  if (!html || typeof html !== 'string') return html;
+  let out = html;
+  out = out.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
+  out = out.replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, '');
+  out = out.replace(/&nbsp;/gi, ' ');
+  out = out.replace(/<p[^>]*>\s*<\/p>/gi, '');
+  out = out.replace(/<\/p>\s*<p[^>]*>/gi, '<br/><br/>');
+  out = out.replace(/<p[^>]*>/gi, '');
+  out = out.replace(/<\/p>/gi, '<br/><br/>');
+  out = out.replace(/(?:<br\/?>(\s|\n|\r)*){3,}/gi, '<br/><br/>');
+  out = out.replace(/^(?:\s|<br\/?>)+/i, '').replace(/(?:\s|<br\/?>)+$/i, '');
+  return out;
+}
+
 /**
  * GET /api/products/[id]
  * Fetch single product by ID or slug
@@ -118,6 +134,9 @@ export async function PUT(request, { params }) {
       }
       return field;
     };
+
+    // sanitize overview if present
+    if (body.overview) body.overview = normalizeOverviewForSaving(body.overview);
 
     // Update fields
     Object.keys(body).forEach((key) => {

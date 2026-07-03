@@ -76,6 +76,7 @@ const AdminProducts = () => {
     const [formData, setFormData] = useState(initialFormState);
     const [specType, setSpecType] = useState('text'); // 'text' | 'table'
     const [specRows, setSpecRows] = useState([{ key: '', value: '' }]);
+    const [overviewDirty, setOverviewDirty] = useState(false);
 
     // Debounce search term
     useEffect(() => {
@@ -121,6 +122,7 @@ const AdminProducts = () => {
         setSelectedFiles([]);
         setSpecRows([{ key: '', value: '' }]);
         setSpecType('text');
+        setOverviewDirty(false);
     };
 
     const handleInputChange = (e) => {
@@ -135,6 +137,7 @@ const AdminProducts = () => {
 
     const handleQuillChange = (name, value) => {
         setFormData(prev => ({ ...prev, [name]: value }));
+        if (name === 'overview') setOverviewDirty(true);
     };
 
     const handleFileChange = (e) => {
@@ -249,6 +252,7 @@ const AdminProducts = () => {
         setPreviewImages(product.images || []);
         setSelectedFiles([]); // Clear any previously selected files
         setIsFormOpen(true);
+        setOverviewDirty(false);
     };
 
     const handleDelete = (id) => {
@@ -280,6 +284,22 @@ const AdminProducts = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        // Clean helper: remove empty <p> tags (including &nbsp;) inserted by the editor when Enter is pressed
+        const cleanOverviewHtml = (html) => {
+            if (!html || typeof html !== 'string') return html;
+            try {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const ps = Array.from(doc.querySelectorAll('p'));
+                ps.forEach(p => {
+                    const txt = p.textContent ? p.textContent.replace(/\u00A0/g, '').trim() : '';
+                    if (!txt) p.remove();
+                });
+                return doc.body.innerHTML;
+            } catch (e) {
+                return html;
+            }
+        };
+
         const data = new FormData();
 
         // Handle Tech Specs Table Mode
@@ -303,7 +323,13 @@ const AdminProducts = () => {
             } else if (key === 'reviews') {
                 data.append('reviews', JSON.stringify(formData.reviews));
             } else if (key === 'technicalSpecification') {
-                data.append('technicalSpecification', finalTechSpecs);
+                    data.append('technicalSpecification', finalTechSpecs);
+                } else if (key === 'overview') {
+                    // Only send overview when creating a product or when it was edited in the admin form
+                    if (!editingId || overviewDirty) {
+                        const cleaned = cleanOverviewHtml(formData.overview);
+                        data.append('overview', cleaned);
+                    }
             } else if (ARRAY_FORM_FIELDS.includes(key)) {
                 // Serialize arrays as JSON strings so the backend parseArrayField() can decode them
                 data.append(key, JSON.stringify(Array.isArray(formData[key]) ? formData[key] : []));

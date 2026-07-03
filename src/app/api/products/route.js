@@ -6,6 +6,31 @@ import Product from '@/models/Product';
 import Category from '@/models/Category';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 
+// Normalize overview HTML coming from Quill: convert <p>..</p> blocks into <br/><br/> separators,
+// remove empty paragraphs and trim excessive &nbsp; so saved HTML displays with visible line breaks.
+const normalizeOverviewForSaving = (html) => {
+  if (!html || typeof html !== 'string') return html;
+  let out = html;
+  // Remove script/iframe tags quickly
+  out = out.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
+  out = out.replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, '');
+  // Replace &nbsp; with regular space
+  out = out.replace(/&nbsp;/gi, ' ');
+  // Remove empty paragraphs: <p> </p> or <p>&nbsp;</p>
+  out = out.replace(/<p[^>]*>\s*<\/p>/gi, '');
+  // Convert closing p followed by opening p into two line breaks
+  out = out.replace(/<\/p>\s*<p[^>]*>/gi, '<br/><br/>');
+  // Remove any remaining opening <p> tags
+  out = out.replace(/<p[^>]*>/gi, '');
+  // Convert remaining </p> to <br/><br/>
+  out = out.replace(/<\/p>/gi, '<br/><br/>');
+  // Collapse multiple consecutive <br/> into maximum two
+  out = out.replace(/(?:<br\/?>(\s|\n|\r)*){3,}/gi, '<br/><br/>');
+  // Trim leading/trailing whitespace and br tags
+  out = out.replace(/^(?:\s|<br\/?>)+/i, '').replace(/(?:\s|<br\/?>)+$/i, '');
+  return out;
+};
+
 /**
  * GET /api/products
  * Fetch all products with filtering and pagination
@@ -226,7 +251,7 @@ export async function POST(request) {
       description: description || '',
       shortDetails: shortDetails || '',
       shortSpecification: shortSpecification || '',
-      overview: overview || '',
+      overview: overview ? normalizeOverviewForSaving(overview) : '',
       technicalSpecification: technicalSpecification || '',
       color: color || '',
       width: width || '',
