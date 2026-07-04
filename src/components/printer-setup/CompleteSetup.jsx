@@ -7,7 +7,7 @@ import BrandFooter from './BrandFooter';
 const brandConfigs = {
   HP: {
     logo: "/hp-bg.png",
-    printerImg: "/hp-bg-image-bg.png",
+    printerImg: "/hp-printer-software.png",
     bgImage: "/hero_background_image.jpg",
     installButtonBgColor: "#279ACB",
     installButtonTextColor: "text-white",
