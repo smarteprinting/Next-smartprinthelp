@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import BrandFooter from './BrandFooter';
 
-const ModelSearch = ({ brand, placeholder, bgImage, searchButtonBgColor, searchButtonTextColor, searchButtonHoverColor }) => {
+const ModelSearch = ({ brand, placeholder, bgImage, searchButtonBgColor, searchButtonTextColor, searchButtonHoverColor, searchButtonShadowColor }) => {
     const [input, setInput] = useState("");
     const [error, setError] = useState("");
     const [allowModelSearch, setAllowModelSearch] = useState(true);
@@ -64,7 +64,13 @@ const ModelSearch = ({ brand, placeholder, bgImage, searchButtonBgColor, searchB
                             />
                             <button
                                 type="submit"
-                                className={`px-5 py-3 rounded-full ${searchButtonBgColor} ${searchButtonTextColor} font-bold text-lg shadow-sm hover:${searchButtonHoverColor} transition`}
+                                className="px-5 py-3 rounded-full font-bold text-lg transition border-2"
+                                style={{
+                                    backgroundColor: '#ffffff',
+                                    color: searchButtonBgColor || '#279ACB',
+                                    borderColor: searchButtonBgColor || '#279ACB',
+                                    boxShadow: `0 10px 24px ${searchButtonShadowColor || 'rgba(39,154,203,0.25)'}`,
+                                }}
                             >
                                 Search
                             </button>

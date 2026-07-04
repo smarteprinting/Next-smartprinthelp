@@ -9,33 +9,37 @@ const brandConfigs = {
     logo: "/hp-bg.png",
     printerImg: "/hp-bg-image-bg.png",
     bgImage: "/hero_background_image.jpg",
-    installButtonBgColor: "bg-red-600",
+    installButtonBgColor: "#279ACB",
     installButtonTextColor: "text-white",
-    installButtonHoverColor: "bg-red-700",
+    installButtonHoverColor: "#1f7fb4",
+    installButtonShadowColor: "rgba(39, 154, 203, 0.35)",
   },
   Brother: {
     logo: "/brother-bg.png",
     printerImg: "/brother-bg-image-bg.png",
     bgImage: "/hero_background_image.jpg",
-    installButtonBgColor: "bg-blue-950",
+    installButtonBgColor: "#3751A9",
     installButtonTextColor: "text-white",
-    installButtonHoverColor: "bg-blue-200",
+    installButtonHoverColor: "#2d4290",
+    installButtonShadowColor: "rgba(55, 81, 169, 0.35)",
   },
   EPSON: {
     logo: "/epson-bg.png",
     printerImg: "/epson-bg-image-bg.png",
     bgImage: "/hero_background_image.jpg",
-    installButtonBgColor: "bg-blue-950",
+    installButtonBgColor: "#3751A9",
     installButtonTextColor: "text-white",
-    installButtonHoverColor: "bg-blue-200",
+    installButtonHoverColor: "#2d4290",
+    installButtonShadowColor: "rgba(55, 81, 169, 0.35)",
   },
   Canon: {
     logo: "/canon-bg.png",
     printerImg: "/canon-image-bg.png",
     bgImage: "/canon-gemini2.jpeg",
-    installButtonBgColor: "bg-red-600",
+    installButtonBgColor: "#8D3343",
     installButtonTextColor: "text-white",
-    installButtonHoverColor: "bg-red-700",
+    installButtonHoverColor: "#6c2735",
+    installButtonShadowColor: "rgba(141, 51, 67, 0.35)",
   },
 };
 
@@ -104,7 +108,13 @@ function CompleteSetup() {
               <li>Install {brand ? brand + ' ' : ''}Smart App to complete setup</li>
             </ol>
             <button
-              className={`${config.installButtonBgColor} ${config.installButtonTextColor} font-semibold px-7 py-3 rounded-full text-lg shadow hover:${config.installButtonHoverColor} transition mb-6 w-fit`}
+              className="font-semibold px-7 py-3 rounded-full text-lg transition mb-6 w-fit border-2"
+              style={{
+                backgroundColor: '#ffffff',
+                color: config.installButtonBgColor || '#279ACB',
+                borderColor: config.installButtonBgColor || '#279ACB',
+                boxShadow: `0 12px 28px ${config.installButtonShadowColor || 'rgba(39,154,203,0.28)'}`,
+              }}
               onClick={handleInstallClick}
             >
               Install {brand ? brand + ' ' : ''}Smart App

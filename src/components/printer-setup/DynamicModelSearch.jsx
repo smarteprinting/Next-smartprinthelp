@@ -8,34 +8,37 @@ const brandConfigs = {
     logo: "/hp-bg.png",
     placeholder: 'e.g. "OfficeJet 9010"',
     bgImage: "/hero_background_image.jpg",
-    searchButtonBgColor: "bg-blue-600",
+    searchButtonBgColor: "#279ACB",
     searchButtonTextColor: "text-white",
-    searchButtonHoverColor: "bg-blue-700",
-
+    searchButtonHoverColor: "#1f7fb4",
+    searchButtonShadowColor: "rgba(39, 154, 203, 0.35)",
   },
   Brother: {
     logo: "/brother-bg.png",
     placeholder: 'e.g. "HL-L2350DW"',
     bgImage: "/hero_background_image.jpg",
-     searchButtonBgColor: "bg-blue-900",
+    searchButtonBgColor: "#3751A9",
     searchButtonTextColor: "text-white",
-    searchButtonHoverColor: "bg-blue-800",
+    searchButtonHoverColor: "#2d4290",
+    searchButtonShadowColor: "rgba(55, 81, 169, 0.35)",
   },
   EPSON: {
     logo: "/epson-bg.png",
     placeholder: 'e.g. "EcoTank L3150"',
     bgImage: "/hero_background_image.jpg",
-     searchButtonBgColor: "bg-blue-950",
+    searchButtonBgColor: "#3751A9",
     searchButtonTextColor: "text-white",
-    searchButtonHoverColor: "bg-blue-800",
+    searchButtonHoverColor: "#2d4290",
+    searchButtonShadowColor: "rgba(55, 81, 169, 0.35)",
   },
   Canon: {
     logo: "/canon-bg.png",
     placeholder: 'e.g. "PIXMA G3000"',
     bgImage: "/canon-gemini2.jpeg",
-     searchButtonBgColor: "bg-red-700",
+    searchButtonBgColor: "#8D3343",
     searchButtonTextColor: "text-white",
-    searchButtonHoverColor: "bg-red-600",
+    searchButtonHoverColor: "#6c2735",
+    searchButtonShadowColor: "rgba(141, 51, 67, 0.35)",
   },
 };
 
@@ -51,6 +54,7 @@ const DynamicModelSearch = () => {
       searchButtonBgColor={config.searchButtonBgColor}
       searchButtonTextColor={config.searchButtonTextColor}
       searchButtonHoverColor={config.searchButtonHoverColor}
+      searchButtonShadowColor={config.searchButtonShadowColor}
     />
   );
 };
