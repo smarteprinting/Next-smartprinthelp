@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const brandLogos = {
@@ -10,21 +9,29 @@ const brandLogos = {
   Canon: '/canon-bg.png',
 };
 
+const brandNavItems = {
+  HP: ['DeskJet', 'ENVY', 'OfficeJet', 'Smart Tank', 'LaserJet'],
+  Brother: ['Inkjet', 'Laser', 'Label Printers', 'Mobile Printers', 'Scanners'],
+  EPSON: ['EcoTank', 'WorkForce', 'Expression', 'SureColor', 'Photo'],
+  Canon: ['PIXMA', 'MAXIFY', 'MegaTank', 'imageCLASS', 'SELPHY'],
+};
+
 const PrinterHeader = ({ showLogo = true }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  
-  // Try to extract brand from the URL
+
   const brandMatch = pathname?.match(/(?:complete-setup|model-search|installation-failed)\/(\w+)/i);
   let brand = brandMatch ? brandMatch[1] : null;
-  // Capitalize properly
+
   if (brand) {
     if (brand.toLowerCase() === 'hp') brand = 'HP';
     else if (brand.toLowerCase() === 'epson') brand = 'EPSON';
     else if (brand.toLowerCase() === 'brother') brand = 'Brother';
     else if (brand.toLowerCase() === 'canon') brand = 'Canon';
   }
+
   const logoSrc = brand && brandLogos[brand] ? brandLogos[brand] : '/hp-logo.svg';
+  const items = brandNavItems[brand] || brandNavItems.HP;
 
   return (
     <header className="w-full h-20 bg-white py-2 flex items-center px-[15vw]">
@@ -34,14 +41,15 @@ const PrinterHeader = ({ showLogo = true }) => {
             <img src={logoSrc} alt="Brand Logo" style={{ width: '120px', height: '48px', objectFit: 'contain', background: 'none', borderRadius: 0 }} />
           )}
         </div>
-        {/* Desktop Menu */}
+
         <ul className="hidden md:flex flex-row gap-10 items-center ml-auto">
-          <li><Link href="/" className="text-gray-800 text-lg font-normal hover:font-semibold transition">Home</Link></li>
-          <li><Link href="#" className="text-gray-800 text-lg font-normal hover:font-semibold transition">Inkjet</Link></li>
-          <li><Link href="#" className="text-gray-800 text-lg font-normal hover:font-semibold transition">Laser</Link></li>
-          <li><Link href="#" className="text-gray-800 text-lg font-normal hover:font-semibold transition">Envy</Link></li>
+          {items.map((item) => (
+            <li key={item}>
+              <span className="text-gray-800 text-lg font-normal hover:font-semibold transition cursor-pointer">{item}</span>
+            </li>
+          ))}
         </ul>
-        {/* Mobile Hamburger */}
+
         <div className="md:hidden flex items-center ml-auto">
           <button
             aria-label="Open menu"
@@ -63,13 +71,14 @@ const PrinterHeader = ({ showLogo = true }) => {
             </svg>
           </button>
         </div>
-        {/* Mobile Menu */}
+
         {menuOpen && (
           <ul className="absolute top-20 left-0 w-full bg-white shadow-md flex flex-col items-center gap-4 py-6 z-50 md:hidden animate-fade-in">
-            <li><Link href="/" className="text-gray-800 text-lg font-normal hover:font-semibold transition">Home</Link></li>
-            <li><Link href="#" className="text-gray-800 text-lg font-normal hover:font-semibold transition">Inkjet</Link></li>
-            <li><Link href="#" className="text-gray-800 text-lg font-normal hover:font-semibold transition">Laser</Link></li>
-            <li><Link href="#" className="text-gray-800 text-lg font-normal hover:font-semibold transition">Envy</Link></li>
+            {items.map((item) => (
+              <li key={item}>
+                <span className="text-gray-800 text-lg font-normal hover:font-semibold transition cursor-pointer">{item}</span>
+              </li>
+            ))}
           </ul>
         )}
       </nav>
