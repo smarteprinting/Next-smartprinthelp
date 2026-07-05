@@ -3,6 +3,28 @@ import React from "react";
 import { useParams } from 'next/navigation';
 import ModelSearch from "./ModelSearch";
 
+function normalizeBrand(value) {
+  const normalizedValue = (value || '').toString().trim().toLowerCase();
+
+  if (['canon', 'canon print', 'canon printer'].includes(normalizedValue)) {
+    return 'Canon';
+  }
+
+  if (['epson', 'epson printer'].includes(normalizedValue)) {
+    return 'EPSON';
+  }
+
+  if (['brother', 'brother printer'].includes(normalizedValue)) {
+    return 'Brother';
+  }
+
+  if (['hp', 'hp smart', 'hp smart app'].includes(normalizedValue)) {
+    return 'HP';
+  }
+
+  return 'HP';
+}
+
 const brandConfigs = {
   HP: {
     logo: "/hp-bg.png",
@@ -16,7 +38,7 @@ const brandConfigs = {
   Brother: {
     logo: "/brother-bg.png",
     placeholder: 'e.g. "HL-L2350DW"',
-    bgImage: "/hero_background_image.jpg",
+    bgImage: "/brother-bg-setup.webp",
     searchButtonBgColor: "#3751A9",
     searchButtonTextColor: "text-white",
     searchButtonHoverColor: "#2d4290",
@@ -25,7 +47,7 @@ const brandConfigs = {
   EPSON: {
     logo: "/epson-bg.png",
     placeholder: 'e.g. "EcoTank L3150"',
-    bgImage: "/hero_background_image.jpg",
+    bgImage: "/epson-bg-setup.webp",
     searchButtonBgColor: "#3751A9",
     searchButtonTextColor: "text-white",
     searchButtonHoverColor: "#2d4290",
@@ -34,7 +56,7 @@ const brandConfigs = {
   Canon: {
     logo: "/canon-bg.png",
     placeholder: 'e.g. "PIXMA G3000"',
-    bgImage: "/canon-gemini2.jpeg",
+    bgImage: "/canon-bg-setup.webp",
     searchButtonBgColor: "#8D3343",
     searchButtonTextColor: "text-white",
     searchButtonHoverColor: "#6c2735",
@@ -44,7 +66,8 @@ const brandConfigs = {
 
 const DynamicModelSearch = () => {
   const { brand } = useParams();
-  const config = brandConfigs[brand] || {};
+  const resolvedBrand = normalizeBrand(brand);
+  const config = brandConfigs[resolvedBrand] || brandConfigs.HP;
   return (
     <ModelSearch
       brand={brand}
