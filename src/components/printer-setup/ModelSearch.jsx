@@ -52,9 +52,9 @@ const ModelSearch = ({ brand, placeholder, bgImage, searchButtonBgColor, searchB
         window.localStorage.setItem('modelSearchInput', input.trim());
         setError("");
         if (brand) {
-            navigate.push(`/printer-setup/complete-setup/${brand}`);
+            navigate.push(`/printer-setup-and-troubleshooting/complete-setup/${brand}`);
         } else {
-            navigate.push('/printer-setup/complete-setup');
+            navigate.push('/printer-setup-and-troubleshooting/complete-setup');
         }
     };
 

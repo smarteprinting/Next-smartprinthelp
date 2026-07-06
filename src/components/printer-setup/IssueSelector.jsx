@@ -80,7 +80,7 @@ function StepThree({ onBack }) {
           <button
             key={conn.label}
             className="flex flex-col items-center justify-center border border-gray-200 rounded-lg py-7 px-2 bg-white hover:bg-blue-50 transition-colors focus:outline-none"
-            onClick={() => navigate.push('/printer-setup/model-search')}
+            onClick={() => navigate.push('/printer-setup-and-troubleshooting/model-search')}
           >
             <i className={`fa-solid ${conn.icon} text-3xl text-blue-700 mb-3`}></i>
             <span className="font-semibold text-gray-700 text-base">{conn.label}</span>
@@ -139,7 +139,7 @@ const IssueSelector = () => {
       alert('Chat support is currently unavailable.');
       setShowError(false);
       setTimeout(() => {
-        navigate.push('/printer-setup');
+        navigate.push('/printer-setup-and-troubleshooting');
       }, 100);
     }} /></div>;
   }

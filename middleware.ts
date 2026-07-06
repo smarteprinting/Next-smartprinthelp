@@ -2,13 +2,19 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export const config = {
-  matcher: ['/printer-setup/:path*'],
+  matcher: ['/printer-setup/:path*', '/printer-setup-and-troubleshooting/:path*'],
 };
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  const isRootPath = pathname === '/printer-setup' || pathname === '/printer-setup/';
-  const isSettingsPath = pathname.startsWith('/printer-setup/settings');
+
+  if (pathname.startsWith('/printer-setup')) {
+    const targetPath = pathname.replace('/printer-setup', '/printer-setup-and-troubleshooting');
+    return NextResponse.redirect(new URL(targetPath === '/printer-setup-and-troubleshooting' ? '/printer-setup-and-troubleshooting/' : targetPath, req.url));
+  }
+
+  const isRootPath = pathname === '/printer-setup-and-troubleshooting' || pathname === '/printer-setup-and-troubleshooting/';
+  const isSettingsPath = pathname.startsWith('/printer-setup-and-troubleshooting/settings');
 
   if (isRootPath || isSettingsPath) {
     return NextResponse.next();
@@ -23,7 +29,7 @@ export async function middleware(req: NextRequest) {
 
     const data = await res.json();
     if (data.allowStartNow === false) {
-      return NextResponse.redirect(new URL('/printer-setup/', req.url));
+      return NextResponse.redirect(new URL('/printer-setup-and-troubleshooting/', req.url));
     }
   } catch (error) {
     console.error('Printer setup middleware error:', error);

@@ -130,7 +130,7 @@ function CompleteSetup() {
           onClose={() => setShowModal(false)}
           user={userName}
           printer={printerModel}
-          onError={() => navigate.push(`/printer-setup/installation-failed/${brand || 'HP'}`)}
+          onError={() => navigate.push(`/printer-setup-and-troubleshooting/installation-failed/${brand || 'HP'}`)}
         />
       </div>
     );
