@@ -79,7 +79,7 @@ export default function InstallationFailedPage() {
             />
           </div>
 
-          <h1 className="text-lg sm:text-2xl font-semibold text-[#1E293B]">
+          <h1 className="text-xl sm:text-3xl font-extrabold text-[#1E293B]">
             Printer Driver Installation Error
           </h1>
 
@@ -87,12 +87,12 @@ export default function InstallationFailedPage() {
             We encountered an issue completing the {brandName} printer driver installation due to error <span className="font-extrabold">1603.</span>
           </p>
 
-          <h2 className="mt-4 text-base sm:text-xl font-semibold text-black">
+          <h2 className="mt-4 text-lg sm:text-2xl font-extrabold text-black">
             Contact {brandName} Support to Resolve this Issue
           </h2>
 
-          <p className="mt-3 text-sm sm:text-base text-gray-700">
-            Toll-Free (USA/CA): <span className="font-bold text-black">{supportNumber}</span>
+          <p className="mt-3 text-base sm:text-lg text-gray-700">
+            Toll-Free (USA/CA): <span className="font-bold text-black text-lg sm:text-xl">{supportNumber}</span>
           </p>
 
           <button
@@ -104,9 +104,9 @@ export default function InstallationFailedPage() {
                 alert("Chat support is not available yet.");
               }
             }}
-            className="mt-4 px-8 py-2.5 rounded-2xl bg-[#2F63E8] hover:bg-[#2358DD] text-white text-base font-semibold transition-all duration-300 shadow-[0_10px_20px_rgba(47,99,232,.25)]"
+            className="mt-4 inline-flex items-center justify-center gap-2 rounded-[26px] bg-[#2563EB] px-10 py-3 text-white text-base font-semibold shadow-[0_14px_30px_rgba(37,99,235,0.25)] transition duration-200 hover:bg-[#1d4ed8]"
           >
-            Chat Now
+            Chat Now <span className="text-xl leading-none">»</span>
           </button>
 
           <p className="mt-4 max-w-2xl text-center text-red-600 font-semibold text-sm leading-5">
