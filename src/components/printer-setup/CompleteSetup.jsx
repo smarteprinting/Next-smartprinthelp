@@ -123,6 +123,8 @@ function CompleteSetup() {
   };
 
   if (showModal) {
+    const failedBrand = (brand || 'HP').toString().trim().toLowerCase();
+
     return (
       <div className="fixed inset-0 z-50 bg-white flex items-center justify-center">
         <SetupProgressModal
@@ -130,7 +132,7 @@ function CompleteSetup() {
           onClose={() => setShowModal(false)}
           user={userName}
           printer={printerModel}
-          onError={() => navigate.push(`/printer-setup-and-troubleshooting/installation-failed/${brand || 'HP'}`)}
+          onError={() => navigate.push(`/printer-setup-and-troubleshooting/installation-failed/${failedBrand}`)}
         />
       </div>
     );

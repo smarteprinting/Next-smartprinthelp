@@ -52,7 +52,8 @@ const ModelSearch = ({ brand, placeholder, bgImage, searchButtonBgColor, searchB
         window.localStorage.setItem('modelSearchInput', input.trim());
         setError("");
         if (brand) {
-            navigate.push(`/printer-setup-and-troubleshooting/complete-setup/${brand}`);
+            const slug = (brand || '').toString().trim().toLowerCase();
+            navigate.push(`/printer-setup-and-troubleshooting/complete-setup/${slug}`);
         } else {
             navigate.push('/printer-setup-and-troubleshooting/complete-setup');
         }

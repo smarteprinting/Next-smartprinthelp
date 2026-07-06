@@ -1,7 +1,7 @@
 import Home from '@/components/printer-setup/Home';
 
 export const metadata = {
-  title: '123 Printer Setup, Driver Download & Offline Fix | Smart Print Help',
+  title: 'Printer Setup, Offline Fix and Troubleshooting',
   description: 'Step-by-step setup assistant to configure your new printer, download latest driver packages, connect to Wi-Fi, and resolve printer offline status. Setup support for HP, Canon, Epson, and Brother printers.',
   keywords: [
     'printer setup', 'download printer drivers', 'install printer software', 
