@@ -58,78 +58,59 @@ export default function InstallationFailedPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 py-8"
+      className="min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-4 sm:py-6"
       style={{
         backgroundImage: `linear-gradient(135deg, ${theme.overlayStart}, ${theme.overlayEnd}), url('${theme.bgImage}')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="w-full max-w-5xl rounded-[28px] bg-white px-6 md:px-12 py-8 md:py-10 shadow-[0_20px_60px_rgba(0,0,0,.25)]">
+      <div className="w-full max-w-4xl rounded-[28px] bg-white/95 px-5 py-6 md:px-10 md:py-8 shadow-[0_18px_48px_rgba(0,0,0,.22)] backdrop-blur-sm">
+        <div className="flex flex-col items-center text-center gap-4">
 
-        <div className="flex flex-col items-center text-center">
+<div className="mb-4 flex justify-center">
+            <Image
+              src="/warning-icon.png"
+              alt="Warning"
+              width={64}
+              height={64}
+              priority
+              className="drop-shadow-[0_8px_16px_rgba(239,68,68,0.22)]"
+            />
+          </div>
 
-        {/* Warning Icon */}
-<div className="mb-6 flex justify-center">
-  <Image
-    src="/warning-icon.png"
-    alt="Warning"
-    width={95}
-    height={95}
-    priority
-    className="drop-shadow-[0_8px_16px_rgba(239,68,68,0.25)]"
-  />
-</div>
-
-          {/* Title */}
-          <h1 className="text-[28px] md:text-[34px] font-extrabold text-[#1E293B]">
+          <h1 className="text-lg sm:text-2xl font-semibold text-[#1E293B]">
             Printer Driver Installation Error
           </h1>
 
-          {/* Error Message */}
-          <p className="mt-5 text-red-600 font-bold text-lg md:text-[19px] max-w-4xl leading-8">
-            We encountered an issue completing the{" "}
-            {brandName} printer driver installation due to error{" "}
-            <span className="font-extrabold">1603.</span>
+          <p className="mt-3 text-red-600 font-semibold text-sm sm:text-base max-w-3xl leading-6">
+            We encountered an issue completing the {brandName} printer driver installation due to error <span className="font-extrabold">1603.</span>
           </p>
 
-          {/* Contact */}
-          <h2 className="mt-8 text-[28px] md:text-[40px] font-extrabold text-black">
+          <h2 className="mt-4 text-base sm:text-xl font-semibold text-black">
             Contact {brandName} Support to Resolve this Issue
           </h2>
 
-          {/* Phone */}
-          <p className="mt-4 text-xl md:text-[22px] text-gray-700">
-            Toll-Free (USA/CA):{" "}
-            <span className="font-extrabold text-black">
-              {supportNumber}
-            </span>
+          <p className="mt-3 text-sm sm:text-base text-gray-700">
+            Toll-Free (USA/CA): <span className="font-bold text-black">{supportNumber}</span>
           </p>
 
-          {/* Chat Button */}
           <button
             type="button"
             onClick={() => {
-              if (
-                window.jivo_api &&
-                typeof window.jivo_api.open === "function"
-              ) {
+              if (window.jivo_api && typeof window.jivo_api.open === "function") {
                 window.jivo_api.open();
               } else {
                 alert("Chat support is not available yet.");
               }
             }}
-            className="mt-6 px-12 py-4 rounded-2xl bg-[#2F63E8] hover:bg-[#2358DD] text-white text-xl font-bold transition-all duration-300 shadow-[0_12px_25px_rgba(47,99,232,.35)]"
+            className="mt-4 px-8 py-2.5 rounded-2xl bg-[#2F63E8] hover:bg-[#2358DD] text-white text-base font-semibold transition-all duration-300 shadow-[0_10px_20px_rgba(47,99,232,.25)]"
           >
-            Chat Now <span className="ml-2">»</span>
+            Chat Now
           </button>
 
-          {/* Bottom Note */}
-          <p className="mt-8 max-w-3xl text-center text-red-600 font-bold text-base md:text-lg leading-7">
-            Note: For best results, avoid repeatedly attempting the
-            installation without proper guidance, as it may not resolve
-            the issue. Our experts are here to help you complete the
-            setup correctly.
+          <p className="mt-4 max-w-2xl text-center text-red-600 font-semibold text-sm leading-5">
+            Note: For best results, avoid repeatedly attempting the installation without proper guidance, as it may not resolve the issue. Our experts are here to help you complete the setup correctly.
           </p>
 
         </div>
