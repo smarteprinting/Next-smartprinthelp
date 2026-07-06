@@ -9,24 +9,26 @@ const brands = [
     color: "#279ACB",
     shadowColor: "rgba(39, 154, 203, 0.25)"
   },
-  {
-    name: "Brother",
-    logo: "/brother-bg.png",
-    color: "#3751A9",
-    shadowColor: "rgba(55, 81, 169, 0.25)"
+    {
+    name: "Canon",
+    logo: "/canon-bg.png",
+    color: "#8D3343",
+    shadowColor: "rgba(141, 51, 67, 0.25)"
   },
-  {
+    {
     name: "EPSON",
     logo: "/epson-bg.png",
     color: "#3751A9",
     shadowColor: "rgba(55, 81, 169, 0.25)"
   },
   {
-    name: "Canon",
-    logo: "/canon-bg.png",
-    color: "#8D3343",
-    shadowColor: "rgba(141, 51, 67, 0.25)"
+    name: "Brother",
+    logo: "/brother-bg.png",
+    color: "#3751A9",
+    shadowColor: "rgba(55, 81, 169, 0.25)"
   }
+
+
 ];
 
 const HomeHero = () => {
