@@ -56,6 +56,8 @@ export default function InstallationFailedPage() {
 
   const theme = brandThemes[resolvedBrand] || brandThemes.HP;
 
+ 
+
   return (
     <div
       className="min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-4 sm:py-6"

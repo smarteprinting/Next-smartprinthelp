@@ -146,6 +146,21 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <script async src="https://ob.sornavellon.com/i/6cd83818f302977b2729291478f5574c.js" className="ct_clicktrue"></script>
+
+        {/* Google tag (gtag.js) */}
+        <Script
+          id="gtag-js"
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18114921677"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="gtag-inline"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'AW-18114921677');`,
+          }}
+        />
 
 
         {/* Store Schema */}
@@ -155,6 +170,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        <noscript dangerouslySetInnerHTML={{__html: '<iframe src="https://ob.sornavellon.com/ns/6cd83818f302977b2729291478f5574c.html?ch=" width="0" height="0" style="display:none"></iframe>'}} />
         {/* JivoChat - Deferred until page is interactive */}
         <Script
           id="jivochat-deferred"
