@@ -1,37 +1,20 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import BrandFooter from './BrandFooter';
+import ModelPage from './ModelPage';
 
-function normalizeBrand(value) {
-    const normalizedValue = (value || '').toString().trim().toLowerCase();
-
-    if (['canon', 'canon print', 'canon printer'].includes(normalizedValue)) {
-        return 'Canon';
-    }
-
-    if (['epson', 'epson printer'].includes(normalizedValue)) {
-        return 'Epson';
-    }
-
-    if (['brother', 'brother printer'].includes(normalizedValue)) {
-        return 'Brother';
-    }
-
-    if (['hp', 'hp smart', 'hp smart app'].includes(normalizedValue)) {
-        return 'HP';
-    }
-
-    return 'HP';
-}
-
-const ModelSearch = ({ brand, placeholder, bgImage, searchButtonBgColor, searchButtonTextColor, searchButtonHoverColor, searchButtonShadowColor }) => {
+const ModelSearch = ({ 
+    brand, 
+    placeholder, 
+    bgImage, 
+    stackedPrintersImg, 
+    howToFindModelImg, 
+    searchButtonBgColor 
+}) => {
     const [input, setInput] = useState("");
     const [error, setError] = useState("");
     const [allowModelSearch, setAllowModelSearch] = useState(true);
-    const navigate = useRouter();
-    const resolvedBrand = normalizeBrand(brand);
-    const brandLabel = resolvedBrand === 'Epson' ? 'Epson' : resolvedBrand;
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         fetch('/api/printer-setup/settings')
@@ -42,76 +25,127 @@ const ModelSearch = ({ brand, placeholder, bgImage, searchButtonBgColor, searchB
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!allowModelSearch) {
-            return;
-        }
+        if (!allowModelSearch) return;
+
         if (input.trim() === "") {
-            setError("Please enter your product name.");
+            setError("Please enter your model number.");
             return;
         }
         window.localStorage.setItem('modelSearchInput', input.trim());
         setError("");
-        if (brand) {
-            const slug = (brand || '').toString().trim().toLowerCase();
-            navigate.push(`/printer-setup-and-troubleshooting/complete-setup/${slug}`);
-        } else {
-            navigate.push('/printer-setup-and-troubleshooting/complete-setup');
-        }
+        setIsModalOpen(true);
     };
 
     return (
-        <div className="w-full md:min-h-[90vh] min-h-screen bg-white flex flex-col">
+        <div className="w-full bg-white flex flex-col font-sans">
+            {/* Modal Component */}
+            <ModelPage isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+            {/* Top Hero Banner */}
             <section
-                className="w-full min-h-[420px] flex items-start justify-center relative md:px-[6%] px-3"
+                className="w-full min-h-[360px] md:min-h-[400px] flex items-center justify-center relative px-4 md:px-12"
                 style={{
-                    height: '420px',
-                    backgroundImage: `url(${bgImage})`,
+                    backgroundImage: `url(${bgImage || '/hero_background_image.jpg'})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                 }}
             >
-                <div className="w-full max-w-[1200px] flex md:flex-row flex-col items-start md:justify-between justify-start relative h-full">
-                    <div className="flex flex-col justify-center h-full w-full max-w-[700px] md:pt-0 pt-8" id="model-search-main-content">
-                        <h1 className="text-white text-[2.7rem] md:text-[2.7rem] text-2xl font-normal mb-8 leading-tight drop-shadow-lg">Set up your {brandLabel} printer</h1>
-                        <p className="text-white md:text-xl text-base mb-8 font-normal leading-snug drop-shadow">
-                            Enter your product name and model number to get the right {brandLabel} printer software and drivers for your device.
-                        </p>
-                        <form className="flex md:flex-row flex-col items-center w-full max-w-[600px] gap-3 md:gap-4" onSubmit={handleSubmit}>
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={e => setInput(e.target.value)}
-                                placeholder={placeholder ? placeholder : 'Enter your product name here. For example: OfficeJet 9010'}
-                                className="flex-1 px-5 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg bg-white shadow-sm w-full"
-                                disabled={!allowModelSearch}
-                            />
-                            <button
-                                type="submit"
-                                className="px-5 py-3 rounded-full font-bold text-lg transition border-2"
-                                style={{
-                                    backgroundColor: '#ffffff',
-                                    color: searchButtonBgColor || '#279ACB',
-                                    borderColor: searchButtonBgColor || '#279ACB',
-                                    boxShadow: `0 10px 24px ${searchButtonShadowColor || 'rgba(39,154,203,0.25)'}`,
-                                }}
+                <div className="w-full max-w-[1280px] flex md:flex-row flex-col items-center justify-between relative py-8 gap-8">
+                    {/* Left Hero Content */}
+                    <div className="flex flex-col text-white max-w-[550px] z-10">
+                        <h1 className="text-3xl md:text-4xl font-bold mb-4 tracking-wide">
+                            Quick Printer Drivers
+                        </h1>
+                        <ul className="space-y-2 mb-6 text-sm md:text-base font-light">
+                            <li className="flex items-center gap-2">
+                                <span className="text-xs">●</span> Make sure your printer is powered on
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <span className="text-xs">●</span> Click on Download to install the drivers
+                            </li>
+                        </ul>
+                        <div>
+                            <button 
+                                onClick={() => setIsModalOpen(true)}
+                                className="bg-[#00a8e8] hover:bg-[#0092cd] text-white px-6 py-2.5 rounded-full text-sm font-semibold flex items-center gap-2 transition-colors shadow-md"
                             >
-                                Search
+                                Download Now <span>↓</span>
                             </button>
-                        </form>
-                        {error && <div className="text-red-500 text-sm mt-2 text-left">{error}</div>}
+                        </div>
+                    </div>
+
+                    {/* Right Hero Printer Cluster Image */}
+                    <div className="flex justify-center items-center w-full max-w-[320px] md:max-w-[360px]">
+                        <img 
+                            src={stackedPrintersImg || "/stacked-printers.png"} 
+                            alt="Printer Models" 
+                            className="w-full h-auto object-contain drop-shadow-md"
+                        />
                     </div>
                 </div>
             </section>
 
-            <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between mt-12 px-4 mb-12">
-                <div className="flex-1 mb-8 md:mb-0">
-                    <p className="text-lg text-gray-800 mb-4">Install {brandLabel} software and drivers on each device you want to print from.</p>
-                    <p className="text-lg text-gray-800">Need additional help? Visit <a href="#" className="text-blue-600 underline hover:text-blue-800">{brandLabel} Support</a></p>
+            {/* Form & Instructions Section */}
+            <section id="search-form-section" className="w-full bg-[#f8f9fa] py-16 md:py-20 px-4 md:px-12 min-h-[45vh]">
+                <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+                    
+                    {/* Left Form Box */}
+                    <div className="w-full md:w-[48%] flex flex-col">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                            Quick Download Printer Drivers
+                        </h2>
+                        <p className="text-gray-800 text-sm font-semibold mb-6">
+                            Fill the form and find your printer driver
+                        </p>
+
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                            <label className="text-xs text-gray-600 font-medium">
+                                Model Number:
+                            </label>
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                placeholder={placeholder || ""}
+                                className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm"
+                                disabled={!allowModelSearch}
+                            />
+                            {error && <span className="text-red-500 text-xs">{error}</span>}
+
+                            <div className="mt-2">
+                                <button
+                                    type="submit"
+                                    className="bg-[#00a8e8] hover:bg-[#0092cd] text-white text-xs md:text-sm font-bold py-2.5 px-5 rounded inline-flex items-center gap-2 transition-colors shadow-sm"
+                                    style={{
+                                        backgroundColor:  '#00a8e8' || searchButtonBgColor
+                                    }}
+                                >
+                                    Quick Download & Install Drivers! <span>↓</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Right How to Find Model Section */}
+                    <div className="w-full md:w-[48%] flex flex-col">
+                        <h3 className="text-base font-bold text-gray-900 mb-1">
+                            How to find printer model number?
+                        </h3>
+                        <p className="text-gray-500 text-xs mb-6">
+                            The product name is on the front of your device.
+                        </p>
+
+                        <div className="w-full flex justify-center items-center pt-2">
+                            <img 
+                                src={howToFindModelImg || "/how-to-find-model.png"} 
+                                alt="How to find model number" 
+                                className="max-w-[340px] md:max-w-[380px] w-full h-auto object-contain"
+                            />
+                        </div>
+                    </div>
+
                 </div>
-                <div className="flex-1 flex justify-center md:justify-end">
-                    <img src="/printer-without-bg.png" alt="Printer and Devices" className="h-[220px] w-auto max-w-full drop-shadow-xl" />
-                </div>
-            </div>
+            </section>
 
             {brand && <BrandFooter brand={brand} />}
         </div>

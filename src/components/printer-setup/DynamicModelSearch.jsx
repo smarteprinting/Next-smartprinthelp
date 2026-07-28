@@ -30,6 +30,8 @@ const brandConfigs = {
     logo: "/hp-bg.png",
     placeholder: 'e.g. "OfficeJet 9010"',
     bgImage: "/hero_background_image.jpg",
+    stackedPrintersImg: "/hp-printers-stack.png", 
+    howToFindModelImg: "/hp-model-guide.png", 
     searchButtonBgColor: "#279ACB",
     searchButtonTextColor: "text-white",
     searchButtonHoverColor: "#1f7fb4",
@@ -39,6 +41,8 @@ const brandConfigs = {
     logo: "/brother-bg.png",
     placeholder: 'e.g. "HL-L2350DW"',
     bgImage: "/brother-bg-setup.webp",
+    stackedPrintersImg: "/brother-hero.png", 
+    howToFindModelImg: "/brother-model-guide.png",
     searchButtonBgColor: "#3751A9",
     searchButtonTextColor: "text-white",
     searchButtonHoverColor: "#2d4290",
@@ -48,6 +52,8 @@ const brandConfigs = {
     logo: "/epson-bg.png",
     placeholder: 'e.g. "EcoTank L3150"',
     bgImage: "/epson-bg-setup.webp",
+    stackedPrintersImg: "/epson-hero.png", 
+    howToFindModelImg: "/epson-model-guide.png", 
     searchButtonBgColor: "#3751A9",
     searchButtonTextColor: "text-white",
     searchButtonHoverColor: "#2d4290",
@@ -57,6 +63,8 @@ const brandConfigs = {
     logo: "/canon-bg.png",
     placeholder: 'e.g. "PIXMA G3000"',
     bgImage: "/canon-bg-setup.webp",
+    stackedPrintersImg: "/canon-hero.png", 
+    howToFindModelImg: "/canon-model-guide.png", 
     searchButtonBgColor: "#8D3343",
     searchButtonTextColor: "text-white",
     searchButtonHoverColor: "#6c2735",
@@ -68,12 +76,15 @@ const DynamicModelSearch = () => {
   const { brand } = useParams();
   const resolvedBrand = normalizeBrand(brand);
   const config = brandConfigs[resolvedBrand] || brandConfigs.HP;
+
   return (
     <ModelSearch
       brand={brand}
       logo={config.logo}
       placeholder={config.placeholder}
       bgImage={config.bgImage}
+      stackedPrintersImg={config.stackedPrintersImg}
+      howToFindModelImg={config.howToFindModelImg}
       searchButtonBgColor={config.searchButtonBgColor}
       searchButtonTextColor={config.searchButtonTextColor}
       searchButtonHoverColor={config.searchButtonHoverColor}

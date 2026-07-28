@@ -10,10 +10,24 @@ const brandLogos = {
 };
 
 const brandNavItems = {
-  HP: ['DeskJet', 'ENVY', 'OfficeJet', 'Smart Tank', 'LaserJet'],
-  Brother: ['Inkjet', 'Laser', 'Label Printers', 'Mobile Printers', 'Scanners'],
-  EPSON: ['EcoTank', 'WorkForce', 'Expression', 'SureColor', 'Photo'],
-  Canon: ['PIXMA', 'MAXIFY', 'MegaTank', 'imageCLASS', 'SELPHY'],
+  HP: ['Home', 'OfficeJet', 'InkJet', 'LaserJet', 'Envy'],
+  Brother: [
+    'Printers & All-In-One',
+    'Ink Tank Printers',
+    'Laser Printers',
+    'Mono Laser Printers',
+    'A3 Printers',
+  ],
+  EPSON: ['Home', 'Printers', 'Ink', 'Projectors', 'Scanners', 'Point of Sale'],
+  Canon: [
+    'Maxify',
+    'Laser',
+    'Selphy',
+    'Supplies',
+    'Projectors',
+    'Label Printer',
+    'ink',
+  ],
 };
 
 const Header = ({ showLogo = true }) => {
