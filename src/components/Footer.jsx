@@ -1,5 +1,6 @@
 import React from "react";
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 const Footer = () => {
@@ -12,11 +13,11 @@ const Footer = () => {
         {/* LOGO + COMPANY INFO */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <img
+            <Image
               src="/smart-print-help-logo-footer.png"
               alt="Smart Print Help Logo"
-              width="180"
-              height="48"
+              width={180}
+              height={48}
               className="w-44 h-auto object-contain"
               loading="lazy"
             />
@@ -87,11 +88,11 @@ const Footer = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between py-6 gap-4">
           <p className="text-gray-400 text-sm">Copyright © 2026 Smart Print Help All rights reserved</p>
           <div className="flex items-center gap-2">
-            <img src="https://img.icons8.com/color/38/paypal.png" alt="PayPal" className="h-7 object-contain" loading="lazy" />
-            <img src="https://img.icons8.com/color/38/visa.png" alt="Visa" className="h-7 object-contain" loading="lazy" />
-            <img src="https://img.icons8.com/color/38/mastercard-logo.png" alt="Mastercard" className="h-7 object-contain" loading="lazy" />
-            <img src="https://img.icons8.com/color/38/discover.png" alt="Discover" className="h-7 object-contain" loading="lazy" />
-            <img src="https://img.icons8.com/color/38/amex.png" alt="Amex" className="h-7 object-contain" loading="lazy" />
+            <Image src="https://img.icons8.com/color/38/paypal.png" alt="PayPal" width={28} height={28} className="object-contain" />
+            <Image src="https://img.icons8.com/color/38/visa.png" alt="Visa" width={28} height={28} className="object-contain" />
+            <Image src="https://img.icons8.com/color/38/mastercard-logo.png" alt="Mastercard" width={28} height={28} className="object-contain" />
+            <Image src="https://img.icons8.com/color/38/discover.png" alt="Discover" width={28} height={28} className="object-contain" />
+            <Image src="https://img.icons8.com/color/38/amex.png" alt="Amex" width={28} height={28} className="object-contain" />
           </div>
         </div>
       </div>

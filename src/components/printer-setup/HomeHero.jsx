@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
+// keep React client usage; no next/image for exact original background
 
 const brands = [
   {
