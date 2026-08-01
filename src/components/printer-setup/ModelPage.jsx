@@ -51,6 +51,17 @@ export default function ModelPage({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
+  // Fire conversion event when error page (step 7) is displayed
+  useEffect(() => {
+    if (step === "7" && typeof window !== "undefined" && typeof gtag === "function") {
+      gtag('event', 'conversion', {
+        'send_to': 'AW-18114921677/BbFRCPXCu6gcEM2J771D',
+        'value': 1.0,
+        'currency': 'USD'
+      });
+    }
+  }, [step]);
+
   // Handle dynamic cycling of search text every 2 seconds
   useEffect(() => {
     let searchInterval;
