@@ -3,6 +3,7 @@ import HomeHero from './HomeHero'
 import HomeBanner from './HomeBanner'
 import FAQSection from './FAQSection'
 import SupportHighlights from './SupportHighlights'
+import Footer from '../Footer'
 
 function Home() {
   return (
@@ -11,6 +12,8 @@ function Home() {
       <HomeBanner />  
       <FAQSection />
       <SupportHighlights />
+
+      <Footer />
     </>
   )
 }
