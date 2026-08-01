@@ -59,8 +59,8 @@ const HomeHero = () => {
     <section className="relative bg-black min-h-[400px] md:min-h-0 md:h-screen flex flex-col items-center justify-center text-white pb-16">
       <div className="absolute inset-0 bg-black/70 z-0" style={{backgroundImage: 'url(https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1500&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'brightness(0.7)'}}></div>
       <div className="relative z-10 flex flex-col items-center pt-10 pb-6 xs:pt-16 xs:pb-8">
-        <span className="uppercase tracking-widest text-xs xs:text-sm text-gray-300 mb-2">Printer Setup</span>
-        <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-4 text-center">Download Your Printer Drivers</h1>
+        <span className="uppercase tracking-widest text-xs xs:text-sm text-gray-300 mb-2">Start Printer Setup & Troubleshooting</span>
+        <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-4 text-center">Set Up & Troubleshoot Your Printer in Minutes</h1>
         <p className="text-base xs:text-lg sm:text-xl text-center mb-4 xs:mb-6">Select Your Printer Model</p>
       </div>
       <div className="relative z-10 w-full flex flex-wrap justify-center gap-4 md:gap-8">
