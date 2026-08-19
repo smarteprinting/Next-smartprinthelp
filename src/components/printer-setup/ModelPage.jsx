@@ -18,6 +18,9 @@ export default function ModelPage({ isOpen, onClose }) {
   const [detectingTextIndex, setDetectingTextIndex] = useState(0);
   const [progressPercent, setProgressPercent] = useState(0);
   const [searchMsgIndex, setSearchMsgIndex] = useState(0);
+  const [form, setForm] = useState({ name: "", phone: "", email: "" });
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const usbSearchMessages = [
     "Searching for USB Ports...",
@@ -48,6 +51,9 @@ export default function ModelPage({ isOpen, onClose }) {
       setDetectingTextIndex(0);
       setProgressPercent(0);
       setSearchMsgIndex(0);
+      setForm({ name: "", phone: "", email: "" });
+      setFormError("");
+      setIsSubmitting(false);
     }
   }, [isOpen]);
 
@@ -143,6 +149,35 @@ export default function ModelPage({ isOpen, onClose }) {
     setStep("6");
   };
 
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    setFormError("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/printer-setup/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          model: window.localStorage.getItem("modelSearchInput") || "Not specified",
+          agree: true,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to submit your details.");
+      }
+
+      setStep("1_loading");
+    } catch (error) {
+      setFormError(error.message || "Unable to submit your details. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleOpenChat = () => {
     if (window.jivo_api && typeof window.jivo_api.open === "function") {
       window.jivo_api.open();
@@ -177,18 +212,47 @@ export default function ModelPage({ isOpen, onClose }) {
 
           {/* STEP 1: Let's Start Wizard */}
           {step === "1" && (
-            <div className="w-full h-full flex flex-col items-center justify-start space-y-4 pt-2">
+            <form onSubmit={handleFormSubmit} className="w-full h-full flex flex-col items-center justify-start gap-3 pt-1 overflow-y-auto">
+              <p className="text-gray-700 font-medium text-base">Enter your details to start setup</p>
+              <input
+                type="text"
+                value={form.name}
+                onChange={(event) => setForm({ ...form, name: event.target.value })}
+                placeholder="Enter your name"
+                aria-label="Name"
+                required
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]"
+              />
+              <input
+                type="tel"
+                value={form.phone}
+                onChange={(event) => setForm({ ...form, phone: event.target.value })}
+                placeholder="Enter your phone number"
+                aria-label="Phone number"
+                required
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]"
+              />
+              <input
+                type="email"
+                value={form.email}
+                onChange={(event) => setForm({ ...form, email: event.target.value })}
+                placeholder="Enter your email"
+                aria-label="Email"
+                required
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]"
+              />
+              {formError && <p className="text-red-600 text-xs" role="alert">{formError}</p>}
               <button
-                onClick={() => setStep("1_loading")}
-                className="bg-[#1877F2] hover:bg-[#166fe5] text-white font-semibold py-2.5 px-7 rounded-lg flex items-center gap-2 shadow-xs transition-all active:scale-[0.99] text-base cursor-pointer"
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-[#1877F2] hover:bg-[#166fe5] disabled:opacity-60 text-white font-semibold py-2.5 px-7 rounded-lg flex items-center gap-2 shadow-xs transition-all active:scale-[0.99] text-base cursor-pointer disabled:cursor-not-allowed"
               >
-                Let's Start ➔
+                {isSubmitting ? "Submitting..." : "Let's Start ➔"}
               </button>
-              <p className="text-gray-700 font-medium text-base">Start Printer Setup Wizard</p>
-              <div className="pt-3 max-w-[260px]">
+              <div className="pt-1 max-w-[220px]">
                 <img src="/wizard-start-box.png" alt="Printer Box" className="w-full h-auto object-contain" />
               </div>
-            </div>
+            </form>
           )}
 
           {/* STEP 1_LOADING: Spinner placed directly below the header border */}

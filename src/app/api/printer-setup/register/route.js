@@ -9,9 +9,8 @@ export async function POST(request) {
     const body = await request.json();
     const { model, name, phone, email, agree } = body;
 
-    // model and name are required; phone and email optional (form is bypassed)
-    if (!model || !name) {
-      return NextResponse.json({ error: 'Model and name are required.' }, { status: 400 });
+    if (!model || !name || !phone || !email) {
+      return NextResponse.json({ error: 'Name, phone number, and email are required.' }, { status: 400 });
     }
 
     // Save to DB
@@ -31,7 +30,10 @@ export async function POST(request) {
 
     try {
       await sendEmail({
-        to: 'contact@smartprinthelp.com',
+        to: [
+          process.env.CONTACT_RECEIVER_EMAIL || 'support@smartprinthelp.com',
+          'contact@smartprinthelp.com',
+        ],
         subject: 'New Printer Setup Registration',
         html: htmlContent,
         replyTo: email || 'no-reply@smartprinthelp.com'
