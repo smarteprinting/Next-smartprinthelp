@@ -9,6 +9,7 @@ const ContactForm = () => {
     number: '',
     subject: '',
     message: '',
+    website: '',
     save: false
   });
   const [error, setError] = useState({});
@@ -48,10 +49,11 @@ const ContactForm = () => {
         email: formData.email,
         phone: formData.number,
         subject: formData.subject,
-        message: formData.message
+        message: formData.message,
+        website: formData.website
       });
       setSuccess('Message sent successfully!');
-      setFormData({ name: '', email: '', number: '', subject: '', message: '', save: false });
+      setFormData({ name: '', email: '', number: '', subject: '', message: '', website: '', save: false });
     } catch (err) {
       console.error('Contact form error:', err);
       setError({ submit: err.message || 'Failed to send message. Please try again.' });
@@ -62,6 +64,16 @@ const ContactForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      <input
+        type="text"
+        name="website"
+        value={formData.website}
+        onChange={handleChange}
+        tabIndex="-1"
+        autoComplete="off"
+        aria-hidden="true"
+        className="hidden"
+      />
       {success && <p className="text-green-600 text-base font-medium">{success}</p>}
       {error.submit && <p className="text-red-500 text-base font-medium">{error.submit}</p>}
       <div>
