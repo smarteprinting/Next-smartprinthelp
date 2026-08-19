@@ -3,30 +3,61 @@ import { connectDB } from '@/lib/mongodb';
 import PrinterRegistration from '@/models/PrinterRegistration';
 import { sendEmail } from '@/lib/emailService';
 import { checkDistributedRateLimit, RATE_LIMITS } from '@/lib/securityRateLimit';
-import { escapeHtml, getClientIp, isValidEmail, logSecurity } from '@/lib/security';
+import { escapeHtml, getClientIp, isValidEmail, logSecurity, verifyRecaptchaToken } from '@/lib/security';
 import { createSecurityFingerprint } from '@/lib/securityFingerprint';
 
 export async function POST(request) {
   try {
-    await connectDB();
-    const body = await request.json();
-    const { model, name, phone, email, agree, website } = body;
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+    }
+
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+    }
+
+    const { model, name, phone, email, agree, website, recaptchaToken } = body;
 
     if (website) {
       logSecurity(request, 'BLOCK', 'HONEYPOT');
       return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
     }
 
-    if (!model || !name || !phone || !email || !isValidEmail(email)) {
+    if (
+      typeof model !== 'string' ||
+      typeof name !== 'string' ||
+      typeof phone !== 'string' ||
+      typeof email !== 'string' ||
+      agree !== true ||
+      !model.trim() ||
+      !name.trim() ||
+      !phone.trim() ||
+      !isValidEmail(email.trim())
+    ) {
       return NextResponse.json({ error: 'Name, phone number, and email are required.' }, { status: 400 });
     }
 
-    if ([model, name, phone, email].some(value => String(value).length > 200)) {
+    if ([model, name, phone, email].some(value => value.trim().length > 200)) {
       return NextResponse.json({ error: 'Invalid request data.' }, { status: 400 });
     }
 
+    if (!(await verifyRecaptchaToken(recaptchaToken, 'model_page_registration'))) {
+      logSecurity(request, 'BLOCK', 'RECAPTCHA');
+      return NextResponse.json({ error: 'Security verification failed. Please try again.' }, { status: 403 });
+    }
+
+    await connectDB();
+
+    const normalizedModel = model.trim();
+    const normalizedName = name.trim();
+    const normalizedPhone = phone.trim();
+    const normalizedEmail = email.trim().toLowerCase();
+
     const rateLimit = await checkDistributedRateLimit({
-      identifier: createSecurityFingerprint([getClientIp(request), email, model]),
+      identifier: createSecurityFingerprint([getClientIp(request), normalizedEmail, normalizedModel]),
       scope: 'submission-registration',
       ...RATE_LIMITS.submission,
     });
@@ -36,16 +67,22 @@ export async function POST(request) {
     }
 
     // Save to DB
-    const reg = new PrinterRegistration({ model, name, phone, email, agree });
+    const reg = new PrinterRegistration({
+      model: normalizedModel,
+      name: normalizedName,
+      phone: normalizedPhone,
+      email: normalizedEmail,
+      agree,
+    });
     await reg.save();
 
     // Send notification to contact@smartprinthelp.com (ss2)
     const htmlContent = `
       <h2>New Printer Setup Registration</h2>
-      <p><strong>Name:</strong> ${escapeHtml(name)}</p>
-      <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-      <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
-      <p><strong>Printer Model:</strong> ${escapeHtml(model)}</p>
+      <p><strong>Name:</strong> ${escapeHtml(normalizedName)}</p>
+      <p><strong>Email:</strong> ${escapeHtml(normalizedEmail)}</p>
+      <p><strong>Phone:</strong> ${escapeHtml(normalizedPhone)}</p>
+      <p><strong>Printer Model:</strong> ${escapeHtml(normalizedModel)}</p>
       <p><strong>Agreed to terms:</strong> ${agree ? 'Yes' : 'No'}</p>
       <p><em>Submitted: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })} EST</em></p>
     `;
@@ -58,7 +95,7 @@ export async function POST(request) {
         ],
         subject: 'New Printer Setup Registration',
         html: htmlContent,
-        replyTo: email || 'no-reply@smartprinthelp.com'
+        replyTo: normalizedEmail
       });
       console.log('✅ Printer registration email sent to contact@smartprinthelp.com');
     } catch (emailErr) {

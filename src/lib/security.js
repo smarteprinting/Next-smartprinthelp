@@ -35,3 +35,35 @@ export function isValidEmail(value) {
   return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+export async function verifyRecaptchaToken(token, expectedAction) {
+  const secret = process.env.RECAPTCHA_SECRET_KEY;
+  const allowedHostnames = (process.env.RECAPTCHA_ALLOWED_HOSTNAMES || '')
+    .split(',')
+    .map((hostname) => hostname.trim().toLowerCase())
+    .filter(Boolean);
+  if (!secret || typeof token !== 'string' || token.length === 0 || token.length > 4096) {
+    return false;
+  }
+
+  try {
+    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        secret,
+        response: token,
+      }),
+      cache: 'no-store',
+    });
+    const result = await response.json();
+    return response.ok &&
+      result.success === true &&
+      (!expectedAction || result.action === expectedAction) &&
+      Number(result.score) >= 0.5 &&
+      (allowedHostnames.length === 0 || allowedHostnames.includes(String(result.hostname || '').toLowerCase()));
+  } catch (error) {
+    console.error('reCAPTCHA verification error:', error);
+    return false;
+  }
+}
+

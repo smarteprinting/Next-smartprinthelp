@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
+const RECAPTCHA_SCRIPT_URL = "https://www.google.com/recaptcha/api.js?render=";
+
 export default function ModelPage({ isOpen, onClose }) {
   // Sequence Mapping:
   // 1: Let's Start Wizard
@@ -56,6 +58,17 @@ export default function ModelPage({ isOpen, onClose }) {
       setIsSubmitting(false);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    if (!isOpen || step !== "1" || !siteKey || document.querySelector(`script[src="${RECAPTCHA_SCRIPT_URL}${siteKey}"]`)) return undefined;
+    const script = document.createElement("script");
+    script.src = `${RECAPTCHA_SCRIPT_URL}${siteKey}`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    return () => {};
+  }, [isOpen, step]);
 
   // Fire conversion event when error page (step 7) is displayed
   useEffect(() => {
@@ -155,6 +168,16 @@ export default function ModelPage({ isOpen, onClose }) {
     setIsSubmitting(true);
 
     try {
+      if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || !window.grecaptcha) {
+        throw new Error("Security verification is not configured.");
+      }
+
+      await new Promise((resolve) => window.grecaptcha.ready(resolve));
+      const recaptchaToken = await window.grecaptcha.execute(
+        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+        { action: "model_page_registration" }
+      );
+
       const response = await fetch("/api/printer-setup/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -162,6 +185,7 @@ export default function ModelPage({ isOpen, onClose }) {
           ...form,
           model: window.localStorage.getItem("modelSearchInput") || "Not specified",
           agree: true,
+          recaptchaToken,
         }),
       });
 
