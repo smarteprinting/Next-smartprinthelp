@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 const RECAPTCHA_SCRIPT_URL = "https://www.google.com/recaptcha/api.js?render=";
 
@@ -21,6 +23,7 @@ export default function ModelPage({ isOpen, onClose }) {
   const [progressPercent, setProgressPercent] = useState(0);
   const [searchMsgIndex, setSearchMsgIndex] = useState(0);
   const [form, setForm] = useState({ name: "", phone: "", email: "", website: "" });
+  const [countryCode, setCountryCode] = useState("US");
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -54,6 +57,7 @@ export default function ModelPage({ isOpen, onClose }) {
       setProgressPercent(0);
       setSearchMsgIndex(0);
       setForm({ name: "", phone: "", email: "", website: "" });
+      setCountryCode("US");
       setFormError("");
       setIsSubmitting(false);
     }
@@ -168,6 +172,18 @@ export default function ModelPage({ isOpen, onClose }) {
     setIsSubmitting(true);
 
     try {
+      if (form.name.trim().length < 2 || form.name.trim().length > 100) {
+        throw new Error("Enter a valid name.");
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+        throw new Error("Enter a valid email address.");
+      }
+
+      if (!form.phone || !isValidPhoneNumber(form.phone)) {
+        throw new Error("Enter a valid phone number for the selected country.");
+      }
+
       if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || !window.grecaptcha) {
         throw new Error("Security verification is not configured.");
       }
@@ -183,6 +199,8 @@ export default function ModelPage({ isOpen, onClose }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          phone: form.phone,
+          country: countryCode,
           model: window.localStorage.getItem("modelSearchInput") || "Not specified",
           agree: true,
           recaptchaToken,
@@ -248,15 +266,23 @@ export default function ModelPage({ isOpen, onClose }) {
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]"
               />
-              <input
-                type="tel"
-                value={form.phone}
-                onChange={(event) => setForm({ ...form, phone: event.target.value })}
-                placeholder="Enter your phone number"
-                aria-label="Phone number"
-                required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]"
-              />
+              <div className="w-full h-[42px] rounded-lg border  bg-white px-3 transition-colors  focus-within:ring-2 focus-within:ring-[#1877F2]/10">
+                <label htmlFor="phone-number" className="sr-only">Mobile number</label>
+                <PhoneInput
+                  id="phone-number"
+                  international
+                  defaultCountry="US"
+                  country={countryCode}
+                  value={form.phone}
+                  onCountryChange={(country) => setCountryCode(country || "US")}
+                  onChange={(phone) => setForm({ ...form, phone: phone || "" })}
+                  placeholder="Enter your phone number"
+                  aria-label="Mobile number"
+                  required
+                  numberInputProps={{ className: "border-0 outline-none focus:border-0 focus:outline-none" }}
+                  className="phone-input h-full"
+                />
+              </div>
               <input
                 type="email"
                 value={form.email}

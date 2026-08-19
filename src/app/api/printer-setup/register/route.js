@@ -35,7 +35,8 @@ export async function POST(request) {
       !model.trim() ||
       !name.trim() ||
       !phone.trim() ||
-      !isValidEmail(email.trim())
+      !isValidEmail(email.trim()) ||
+      !/^\+[1-9]\d{7,14}$/.test(phone.trim())
     ) {
       return NextResponse.json({ error: 'Name, phone number, and email are required.' }, { status: 400 });
     }
