@@ -9,6 +9,15 @@ export const config = {
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
+  console.log('[VISITOR]', JSON.stringify({
+    timestamp: new Date().toISOString(),
+    ip: getClientIp(req),
+    path: pathname,
+    method: req.method,
+    userAgent: req.headers.get('user-agent') || 'missing',
+    referer: req.headers.get('referer') || 'none',
+  }));
+
   const contentLength = Number(req.headers.get('content-length') || 0);
   if (contentLength > 64 * 1024) {
     logSecurity(req, 'BLOCK', 'REQUEST_TOO_LARGE', { contentLength });
