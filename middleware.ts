@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getClientIp, logSecurity } from './src/lib/security';
+import { getClientCountry, getClientIp, logSecurity } from './src/lib/security';
 
 export const config = {
   matcher: ['/((?!_next/static|_next/image|favicon.ico|api/security/rate-limit).*)'],
@@ -9,14 +9,15 @@ export const config = {
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  console.log('[VISITOR]', JSON.stringify({
+  console.log('[traffic]', {
     timestamp: new Date().toISOString(),
     ip: getClientIp(req),
+    country: getClientCountry(req),
     path: pathname,
     method: req.method,
     userAgent: req.headers.get('user-agent') || 'missing',
     referer: req.headers.get('referer') || 'none',
-  }));
+  });
 
   const contentLength = Number(req.headers.get('content-length') || 0);
   if (contentLength > 64 * 1024) {

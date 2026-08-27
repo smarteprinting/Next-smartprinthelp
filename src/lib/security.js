@@ -6,10 +6,15 @@ export function getClientIp(request) {
   return candidate || 'unknown';
 }
 
+export function getClientCountry(request) {
+  return request.headers.get('x-vercel-ip-country') || 'unknown';
+}
+
 export function getRequestSecurityInfo(request) {
   return {
     timestamp: new Date().toISOString(),
     ip: getClientIp(request),
+    country: getClientCountry(request),
     path: new URL(request.url).pathname,
     method: request.method,
     userAgent: request.headers.get('user-agent') || 'missing',
@@ -19,7 +24,7 @@ export function getRequestSecurityInfo(request) {
 
 export function logSecurity(request, action, reason, extra = {}) {
   const info = getRequestSecurityInfo(request);
-  console.log('[SECURITY]', JSON.stringify({ ...info, action, ...(reason ? { reason } : {}), ...extra }));
+  console.log('[SECURITY]', { ...info, action, ...(reason ? { reason } : {}), ...extra });
 }
 
 export function escapeHtml(value) {
