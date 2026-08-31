@@ -2,24 +2,24 @@ import React from "react";
 
 const MissionVision = () => {
   return (
-    <section className="w-full bg-gray-50 py-16 md:py-24">
+    <section className="w-full bg-gray-50 py-12 sm:py-16 md:py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Heading */}
-        <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Our Purpose, Your <br />
+        <div className="text-center mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            Our Purpose, Your <br className="hidden sm:block" />
             Productivity
           </h2>
 
           <p className="text-gray-500 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed">
-            At Smart Print Help, everything we do is centered around helping you print <br /> smarter, faster, and more efficiently.
+            At Smart Print Help, everything we do is centered around helping you print <br className="hidden sm:block" /> smarter, faster, and more efficiently.
           </p>
         </div>
 
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           {/* Mission Card */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-10 sm:p-12 text-center shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 sm:p-10 lg:p-12 text-center shadow-sm hover:shadow-md transition-shadow">
             {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="w-14 h-14 bg-[#EF4056] rounded-full flex items-center justify-center">
@@ -55,7 +55,7 @@ const MissionVision = () => {
           </div>
 
           {/* Vision Card */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-10 sm:p-12 text-center shadow-sm hover:shadow-md transition-shadow md:mt-12">
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 sm:p-10 lg:p-12 text-center shadow-sm hover:shadow-md transition-shadow md:mt-12">
             {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="w-14 h-14 bg-[#EF4056] rounded-full flex items-center justify-center">

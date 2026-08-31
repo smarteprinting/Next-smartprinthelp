@@ -8,16 +8,18 @@ export const config = {
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+  const ip = getClientIp(req);
+  const country = getClientCountry(req);
 
-  console.log('[traffic]', {
-    timestamp: new Date().toISOString(),
-    ip: getClientIp(req),
-    country: getClientCountry(req),
-    path: pathname,
-    method: req.method,
-    userAgent: req.headers.get('user-agent') || 'missing',
-    referer: req.headers.get('referer') || 'none',
-  });
+  console.info(
+    '[traffic]',
+    JSON.stringify({
+      ip,
+      method: req.method,
+      path: pathname,
+      country: country || 'unknown',
+    }),
+  );
 
   const contentLength = Number(req.headers.get('content-length') || 0);
   if (contentLength > 64 * 1024) {
