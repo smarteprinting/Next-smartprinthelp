@@ -2,12 +2,17 @@ export function getClientIp(request) {
   const forwarded = request.headers.get('x-forwarded-for');
   const vercelForwarded = request.headers.get('x-vercel-forwarded-for');
   const realIp = request.headers.get('x-real-ip');
-  const candidate = forwarded?.split(',')[0]?.trim() || vercelForwarded?.split(',')[0]?.trim() || realIp?.trim();
+  const cloudflareIp = request.headers.get('cf-connecting-ip');
+  const candidate = forwarded?.split(',')[0]?.trim()
+    || vercelForwarded?.split(',')[0]?.trim()
+    || realIp?.trim()
+    || cloudflareIp?.trim();
+
   return candidate || 'unknown';
 }
 
 export function getClientCountry(request) {
-  return request.headers.get('x-vercel-ip-country') || 'unknown';
+  return request.headers.get('x-vercel-ip-country') || request.headers.get('cf-ipcountry') || 'unknown';
 }
 
 export function getRequestSecurityInfo(request) {
@@ -19,6 +24,14 @@ export function getRequestSecurityInfo(request) {
     method: request.method,
     userAgent: request.headers.get('user-agent') || 'missing',
     referer: request.headers.get('referer') || 'none',
+    rawHeaders: {
+      xForwardedFor: request.headers.get('x-forwarded-for') || null,
+      xVercelForwardedFor: request.headers.get('x-vercel-forwarded-for') || null,
+      xRealIp: request.headers.get('x-real-ip') || null,
+      cfConnectingIp: request.headers.get('cf-connecting-ip') || null,
+      xVercelIpCountry: request.headers.get('x-vercel-ip-country') || null,
+      cfIpCountry: request.headers.get('cf-ipcountry') || null,
+    },
   };
 }
 
