@@ -1,20 +1,36 @@
 export function getClientIp(request) {
-  return request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  // Fallback checks safely for NextRequest objects or standard incoming Node/Edge request objects
+  const headers = request.headers;
+  if (typeof headers?.get === 'function') {
+    return (
+      headers.get('x-real-ip') ||
+      headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      'unknown'
+    );
+  }
+  return 'unknown';
 }
 
 export function getClientCountry(request) {
-  return request.headers.get('x-vercel-ip-country') || 'unknown';
+  const headers = request.headers;
+  if (typeof headers?.get === 'function') {
+    return headers.get('x-vercel-ip-country') || 'unknown';
+  }
+  return 'unknown';
 }
 
 export function getRequestSecurityInfo(request) {
+  const url = typeof request.url === 'string' ? new URL(request.url) : { pathname: '/' };
+  const headers = request.headers;
+  
   return {
     timestamp: new Date().toISOString(),
     ip: getClientIp(request),
     country: getClientCountry(request),
-    path: new URL(request.url).pathname,
+    path: url.pathname,
     method: request.method,
-    userAgent: request.headers.get('user-agent') || 'missing',
-    referer: request.headers.get('referer') || 'none',
+    userAgent: typeof headers?.get === 'function' ? (headers.get('user-agent') || 'missing') : 'missing',
+    referer: typeof headers?.get === 'function' ? (headers.get('referer') || 'none') : 'none',
   };
 }
 
@@ -42,6 +58,7 @@ export async function verifyRecaptchaToken(token, expectedAction) {
     .split(',')
     .map((hostname) => hostname.trim().toLowerCase())
     .filter(Boolean);
+    
   if (!secret || typeof token !== 'string' || token.length === 0 || token.length > 4096) {
     return false;
   }
@@ -67,4 +84,3 @@ export async function verifyRecaptchaToken(token, expectedAction) {
     return false;
   }
 }
-
