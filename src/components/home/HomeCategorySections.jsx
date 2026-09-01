@@ -139,8 +139,35 @@ function CategorySection({ section }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [hasBeenVisible, setHasBeenVisible] = useState(false);
+  const sectionRef = React.useRef(null);
 
+  // Intersection Observer for lazy loading
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasBeenVisible) {
+          setHasBeenVisible(true);
+        }
+      },
+      { rootMargin: '100px' } // Start loading 100px before visible
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, [hasBeenVisible]);
+
+  // Fetch only when section is about to be visible
+  useEffect(() => {
+    if (!hasBeenVisible) return;
+
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -163,12 +190,12 @@ function CategorySection({ section }) {
       });
 
     return () => { cancelled = true; };
-  }, [section.key]);
+  }, [section.key, hasBeenVisible]);
 
   if (!loading && !error && products.length === 0) return null;
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+    <section ref={sectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
       {/* Section header */}
       <div className="flex items-start justify-between mb-2">
         <div className="max-w-lg">

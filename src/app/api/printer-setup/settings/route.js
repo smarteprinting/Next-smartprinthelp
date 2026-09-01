@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Setting from '@/models/Setting';
 import jwt from 'jsonwebtoken';
+import { checkApiRateLimit } from '@/middleware/rateLimit';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 const ADMIN_USER = 'admin';
@@ -18,7 +19,11 @@ function verifyAdmin(request) {
   }
 }
 
-export async function GET() {
+export async function GET(request) {
+  // Check rate limit - ONE call per request
+  const rateLimitResponse = await checkApiRateLimit(request, 'api');
+  if (rateLimitResponse) return rateLimitResponse;
+
   try {
     await connectDB();
     const settings = await Setting.findById('global').lean();

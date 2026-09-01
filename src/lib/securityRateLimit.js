@@ -2,11 +2,11 @@ import { connectDB } from '@/lib/mongodb';
 import SecurityRateLimit from '@/models/SecurityRateLimit';
 
 export const RATE_LIMITS = {
-  global: { limit: 120, windowMs: 60 * 1000 },
-  landing: { limit: 40, windowMs: 60 * 1000 },
-  api: { limit: 30, windowMs: 60 * 1000 },
-  auth: { limit: 10, windowMs: 60 * 1000 },
-  submission: { limit: 5, windowMs: 10 * 60 * 1000 },
+  global: { limit: process.env.NODE_ENV === 'production' ? 120 : 600, windowMs: 60 * 1000 },
+  landing: { limit: process.env.NODE_ENV === 'production' ? 40 : 200, windowMs: 60 * 1000 },
+  api: { limit: process.env.NODE_ENV === 'production' ? 30 : 500, windowMs: 60 * 1000 },
+  auth: { limit: process.env.NODE_ENV === 'production' ? 10 : 100, windowMs: 60 * 1000 },
+  submission: { limit: process.env.NODE_ENV === 'production' ? 5 : 100, windowMs: 10 * 60 * 1000 },
 };
 
 export async function checkDistributedRateLimit({ identifier, scope, limit, windowMs }) {

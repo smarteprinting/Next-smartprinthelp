@@ -5,47 +5,45 @@ import { usePathname, useRouter } from 'next/navigation';
 
 export default function ClientLayout({ children }) {
   const [showLogo, setShowLogo] = useState(false);
-  const [showHeader, setShowHeader] = useState(false); // Default to false to avoid blinking
+  const [showHeader, setShowHeader] = useState(false);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [allowStartNow, setAllowStartNow] = useState(true);
-  const intervalRef = useRef();
   const pathname = usePathname();
-  const router = useRouter();
+  const router = useRef(useRouter());
 
+  // Fetch settings only once on mount
   useEffect(() => {
-    const fetchHeader = () => {
-      fetch('/api/printer-setup/settings')
-        .then(res => res.json())
-        .then(data => {
-          setShowHeader(data.showHeader === true); // Only show if explicitly true
-          setShowLogo(data.showLogo === true);
-          setAllowStartNow(data.allowStartNow !== false);
+    const fetchHeader = async () => {
+      try {
+        const res = await fetch('/api/printer-setup/settings');
+        const data = await res.json();
+        setShowHeader(data.showHeader === true);
+        setShowLogo(data.showLogo === true);
+        setAllowStartNow(data.allowStartNow !== false);
 
-          const isRootPath = pathname === '/printer-setup-and-troubleshooting' || pathname === '/printer-setup-and-troubleshooting/';
-          const isSettingsPath = pathname?.startsWith('/printer-setup-and-troubleshooting/settings');
+        const isRootPath = pathname === '/printer-setup-and-troubleshooting' || pathname === '/printer-setup-and-troubleshooting/';
+        const isSettingsPath = pathname?.startsWith('/printer-setup-and-troubleshooting/settings');
 
-          // Redirect to root if start now is disabled and user is on a subpage
-          if (data.allowStartNow === false && !isRootPath && !isSettingsPath) {
-            router.push('/printer-setup-and-troubleshooting/');
-          }
-          setSettingsLoaded(true);
-        })
-        .catch(() => {
-          setShowHeader(false);
-          setShowLogo(false);
-          setSettingsLoaded(true);
-        });
+        // Redirect to root if start now is disabled and user is on a subpage
+        if (data.allowStartNow === false && !isRootPath && !isSettingsPath) {
+          router.current.push('/printer-setup-and-troubleshooting/');
+        }
+      } catch (error) {
+        console.error('Failed to fetch settings:', error);
+        setShowHeader(false);
+        setShowLogo(false);
+      } finally {
+        setSettingsLoaded(true);
+      }
     };
+
     fetchHeader();
-    intervalRef.current = setInterval(fetchHeader, 10000);
-    return () => clearInterval(intervalRef.current);
-  }, [pathname, router]);
+  }, []); // Empty dependency array - fetch only once on mount
 
   const isRootPath = pathname === '/printer-setup-and-troubleshooting' || pathname === '/printer-setup-and-troubleshooting/';
   const isSettingsPath = pathname?.startsWith('/printer-setup-and-troubleshooting/settings');
   const shouldHideHeader = isRootPath || isSettingsPath;
 
-  // Prevent flash of subpage content before redirect
   const shouldRenderChildren = isRootPath || isSettingsPath || (settingsLoaded && allowStartNow);
 
   return (
