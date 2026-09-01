@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getClientCountry, getClientIp, logSecurity } from './src/lib/security';
+import { getClientCountry, getClientIp, logSecurity } from './lib/security';
 
 export const config = {
   matcher: ['/((?!_next/static|_next/image|favicon.ico|api/security/rate-limit).*)'],
