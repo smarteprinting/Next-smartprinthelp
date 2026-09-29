@@ -1,0 +1,438 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+
+// ─── Inlined ModelPage Modal ───────────────────────────────────────────────────
+const RECAPTCHA_SCRIPT_URL = "https://www.google.com/recaptcha/api.js?render=";
+
+function ModelPage({ isOpen, onClose }) {
+  const [step, setStep] = useState("1");
+  const [troubleshootPoint, setTroubleshootPoint] = useState(0);
+  const [detectingTextIndex, setDetectingTextIndex] = useState(0);
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [searchMsgIndex, setSearchMsgIndex] = useState(0);
+  const [form, setForm] = useState({ name: "", phone: "", email: "", website: "" });
+  const [countryCode, setCountryCode] = useState("US");
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const usbSearchMessages = [
+    "Searching for USB Ports...",
+    "Checking Printer Spooler...",
+    "Checking Printer Drivers...",
+    "Checking Installation Files...",
+  ];
+  const wifiSearchMessages = [
+    "Searching for Wifi network...",
+    "Checking Printer Spooler...",
+    "Checking Installation Files...",
+  ];
+  const detectingMessages = [
+    "Gathering information about your devices...",
+    "Checking the spooler service...",
+    "checking printer registry files...",
+    "Checking for a default printer...",
+    "Checking for errors from the printer driver...",
+  ];
+
+  useEffect(() => {
+    if (isOpen) {
+      setStep("1");
+      setTroubleshootPoint(0);
+      setDetectingTextIndex(0);
+      setProgressPercent(0);
+      setSearchMsgIndex(0);
+      setForm({ name: "", phone: "", email: "", website: "" });
+      setCountryCode("US");
+      setFormError("");
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    if (!isOpen || step !== "1" || !siteKey || document.querySelector(`script[src="${RECAPTCHA_SCRIPT_URL}${siteKey}"]`)) return undefined;
+    const script = document.createElement("script");
+    script.src = `${RECAPTCHA_SCRIPT_URL}${siteKey}`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    return () => { };
+  }, [isOpen, step]);
+
+  useEffect(() => {
+    if (step === "7" && typeof window !== "undefined" && typeof gtag === "function") {
+      gtag("event", "conversion", {
+        send_to: "AW-18114921677/BbFRCPXCu6gcEM2J771D",
+        value: 1.0,
+        currency: "USD",
+      });
+    }
+  }, [step]);
+
+  useEffect(() => {
+    let searchInterval;
+    if (step === "3_usb" || step === "3_wifi") {
+      setSearchMsgIndex(0);
+      searchInterval = setInterval(() => {
+        setSearchMsgIndex((prev) => (prev + 1) % 3);
+      }, 2000);
+    }
+    return () => clearInterval(searchInterval);
+  }, [step]);
+
+  useEffect(() => {
+    let timer;
+    if (step === "1_loading") {
+      timer = setTimeout(() => setStep("2"), 4000);
+    } else if (step === "3_usb") {
+      timer = setTimeout(() => setStep("4_usb"), 15000);
+    } else if (step === "3_wifi") {
+      timer = setTimeout(() => setStep("4_wifi"), 15000);
+    } else if (step === "4_usb") {
+      timer = setTimeout(() => { setStep("5_usb"); setTroubleshootPoint(0); }, 10);
+    } else if (step === "4_wifi") {
+      timer = setTimeout(() => { setStep("5_wifi"); setTroubleshootPoint(0); }, 10);
+    } else if (step === "5_usb" || step === "5_wifi") {
+      if (troubleshootPoint === 0) {
+        timer = setTimeout(() => setTroubleshootPoint(1), 300);
+      } else if (troubleshootPoint === 1) {
+        timer = setTimeout(() => setTroubleshootPoint(2), 500);
+      } else if (troubleshootPoint === 2) {
+        timer = setTimeout(() => setStep(step === "5_usb" ? "failed_usb" : "failed_wifi"), 3000);
+      }
+    } else if (step === "6") {
+      if (detectingTextIndex === 0 && progressPercent === 0) {
+        timer = setTimeout(() => setProgressPercent(20), 100);
+      } else if (detectingTextIndex < detectingMessages.length - 1) {
+        timer = setTimeout(() => {
+          setDetectingTextIndex((prev) => prev + 1);
+          setProgressPercent((prev) => Math.min(prev + 20, 100));
+        }, 1200);
+      } else {
+        timer = setTimeout(() => {
+          setProgressPercent(100);
+          setTimeout(() => setStep("7"), 400);
+        }, 1200);
+      }
+    }
+    return () => clearTimeout(timer);
+  }, [step, troubleshootPoint, detectingTextIndex, progressPercent]);
+
+  const handleStartDiagnostics = () => {
+    setDetectingTextIndex(0);
+    setProgressPercent(0);
+    setStep("6");
+  };
+
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    setFormError("");
+    setIsSubmitting(true);
+    try {
+      if (form.name.trim().length < 2 || form.name.trim().length > 100) throw new Error("Enter a valid name.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) throw new Error("Enter a valid email address.");
+      if (!form.phone || !isValidPhoneNumber(form.phone)) throw new Error("Enter a valid phone number for the selected country.");
+      if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || !window.grecaptcha) throw new Error("Security verification is not configured.");
+      await new Promise((resolve) => window.grecaptcha.ready(resolve));
+      const recaptchaToken = await window.grecaptcha.execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY, { action: "model_page_registration" });
+      const response = await fetch("/api/printer-setup/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, phone: form.phone, country: countryCode, model: window.localStorage.getItem("modelSearchInput") || "Not specified", agree: true, recaptchaToken }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to submit your details.");
+      setStep("1_loading");
+    } catch (error) {
+      setFormError(error.message || "Unable to submit your details. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleOpenChat = () => {
+    if (window.jivo_api && typeof window.jivo_api.open === "function") window.jivo_api.open();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 font-sans">
+      <div className="relative w-full max-w-[480px] h-[520px] bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 border border-gray-100">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+          <h2 className="w-full text-center text-lg font-bold text-gray-800 tracking-tight leading-none">
+            Download Your Printer Driver
+          </h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 rounded-full p-1 transition-colors leading-none cursor-pointer" aria-label="Close">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Modal Body */}
+        <div className="px-6 pt-5 pb-6 flex-1 flex flex-col items-center text-center overflow-hidden">
+          {/* STEP 1 */}
+          {step === "1" && (
+            <form onSubmit={handleFormSubmit} className="w-full h-full flex flex-col items-center justify-start gap-3 pt-1 overflow-y-auto">
+              <input type="text" name="website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} tabIndex="-1" autoComplete="off" aria-hidden="true" className="hidden" />
+              <p className="text-gray-700 font-medium text-base">Enter your details to start setup</p>
+              <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Enter your name" aria-label="Name" required className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]" />
+              <div className="w-full h-[42px] rounded-lg border bg-white px-3 transition-colors focus-within:ring-2 focus-within:ring-[#1877F2]/10">
+                <label htmlFor="phone-number" className="sr-only">Mobile number</label>
+                <PhoneInput id="phone-number" international defaultCountry="US" country={countryCode} value={form.phone} onCountryChange={(c) => setCountryCode(c || "US")} onChange={(p) => setForm({ ...form, phone: p || "" })} placeholder="Enter your phone number" aria-label="Mobile number" required numberInputProps={{ className: "border-0 outline-none focus:border-0 focus:outline-none" }} className="phone-input h-full" />
+              </div>
+              <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Enter your email" aria-label="Email" required className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]" />
+              {formError && <p className="text-red-600 text-xs" role="alert">{formError}</p>}
+              <button type="submit" disabled={isSubmitting} className="bg-[#1877F2] hover:bg-[#166fe5] mt-5 disabled:opacity-60 text-white font-semibold py-2.5 px-7 rounded-lg flex items-center gap-2 shadow-xs transition-all active:scale-[0.99] text-base cursor-pointer disabled:cursor-not-allowed">
+                {isSubmitting ? "Submitting..." : "Let's Start ➔"}
+              </button>
+              <div className="pt-1 max-w-[220px]">
+                <img src="/wizard-start-box.png" alt="Printer Box" className="w-full h-auto object-contain" />
+              </div>
+            </form>
+          )}
+
+          {/* STEP 1_LOADING */}
+          {step === "1_loading" && (
+            <div className="w-full h-full flex flex-col items-center justify-start pt-16 animate-in fade-in duration-300">
+              <div className="w-12 h-12 border-4 border-[#1877F2] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+
+          {/* STEP 2 */}
+          {step === "2" && (
+            <div className="w-full h-full flex flex-col animate-in fade-in duration-300">
+              <div className="w-full border-b border-gray-100 pb-3 mb-4">
+                <p className="text-gray-800 text-left text-base font-semibold">Select Wi-Fi or USB connection?</p>
+              </div>
+              <div className="space-y-4 pt-1">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                  <div className="flex items-center gap-3">
+                    <img src="/usb-setup.jpg" alt="USB" className="w-16 h-auto object-contain" />
+                    <div className="text-left"><span className="font-bold text-gray-900 text-base">USB: </span><span className="text-gray-600 text-sm">Connect via USB</span></div>
+                  </div>
+                  <button onClick={() => setStep("3_usb")} className="bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-semibold py-2 px-4 rounded-lg flex items-center gap-1 shadow-xs transition-all cursor-pointer">Let's Start ➔</button>
+                </div>
+                <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center gap-3">
+                    <img src="/wifi-setup.png" alt="WIFI" className="w-16 h-auto object-contain" />
+                    <div className="text-left"><span className="font-bold text-gray-900 text-base">WIFI: </span><span className="text-gray-600 text-sm">Connect via Wifi.</span></div>
+                  </div>
+                  <button onClick={() => setStep("3_wifi")} className="bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-semibold py-2 px-4 rounded-lg flex items-center gap-1 shadow-xs transition-all cursor-pointer">Let's Start ➔</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3 */}
+          {(step === "3_usb" || step === "3_wifi") && (
+            <div className="w-full h-full flex flex-col items-center justify-start">
+              <div className="w-full border-b border-gray-100 pb-3 mb-6">
+                <p className="text-gray-600 text-base text-center leading-relaxed">Verify your printer's {step === "3_usb" ? "USB" : "Wifi"} connection for a seamless setup process.</p>
+              </div>
+              <img src={step === "3_usb" ? "/usb-setup.jpg" : "/wifi-setup.png"} alt="Printer Connection" className="w-32 h-auto object-contain my-3" />
+              <div className="flex items-center gap-2.5 text-gray-700 text-base font-medium mt-6 transition-all duration-300">
+                <span className="w-5 h-5 border-2 border-[#1877F2] border-t-transparent rounded-full animate-spin"></span>
+                <span>{step === "3_usb" ? usbSearchMessages[searchMsgIndex] : wifiSearchMessages[searchMsgIndex]}</span>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4 */}
+          {(step === "4_usb" || step === "4_wifi") && (
+            <div className="w-full h-full flex flex-col items-center justify-start">
+              <div className="w-full border-b border-gray-100 pb-3 mb-6">
+                <p className="text-gray-600 text-base text-center leading-relaxed">Verify your printer's {step === "4_usb" ? "USB" : "Wifi"} connection for a seamless setup process.</p>
+              </div>
+              <img src={step === "4_usb" ? "/usb-setup.jpg" : "/wifi-setup.png"} alt="Printer Connection" className="w-32 h-auto object-contain my-3" />
+              <div className="flex items-center gap-2.5 text-red-600 font-semibold text-base mt-6">
+                <span className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></span>
+                <span>Loading Error...</span>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5 */}
+          {(step === "5_usb" || step === "5_wifi") && (
+            <div className="w-full h-full flex flex-col items-center justify-start animate-in fade-in duration-300">
+              <div className="w-full border-b border-gray-100 pb-3 mb-4">
+                <p className="text-gray-600 text-base text-center leading-relaxed">Verify your printer's {step === "5_usb" ? "USB" : "Wifi"} connection for a seamless setup process.</p>
+              </div>
+              <img src={step === "5_usb" ? "/usb-setup.jpg" : "/wifi-setup.png"} alt="Printer Connection" className="w-32 h-auto object-contain my-2" />
+              <div className="flex items-center justify-center gap-2.5 text-red-600 font-semibold text-base my-4">
+                <span className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></span>
+                <span>Loading Error...</span>
+              </div>
+              <div className="text-gray-700 text-sm font-medium space-y-3 text-center pt-2 max-w-sm">
+                {troubleshootPoint >= 1 && <p className="animate-in fade-in duration-300 leading-normal">1. Check {step === "5_usb" ? "USB cable connected both side" : "Wifi connection status"}</p>}
+                {troubleshootPoint >= 2 && <p className="animate-in fade-in duration-300 leading-normal">2. Check your device driver ({step === "5_usb" ? "USB Ports Drivers" : "Wireless Drivers"})</p>}
+              </div>
+            </div>
+          )}
+
+          {/* FAILED SCREEN */}
+          {(step === "failed_usb" || step === "failed_wifi") && (
+            <div className="w-full h-full flex flex-col items-center justify-between animate-in fade-in zoom-in-95 duration-200">
+              <div className="w-full border-b border-gray-100 pb-3">
+                <p className="text-gray-600 text-base text-center leading-relaxed">Verify your printer's {step === "failed_usb" ? "USB" : "Wifi"} connection for a seamless setup process.</p>
+              </div>
+              <img src={step === "failed_usb" ? "/usb-setup.jpg" : "/wifi-setup.png"} alt="Connection" className="w-24 h-auto object-contain my-1" />
+              <h3 className="text-lg font-bold text-gray-900 tracking-tight">{step === "failed_usb" ? "USB connection failed." : "Wifi connection failed."}</h3>
+              <div className="w-full max-w-sm border border-gray-200 rounded-xl divide-y divide-gray-100 text-xs text-gray-700 bg-white shadow-2xs">
+                <div className="py-2.5 px-4 flex justify-between items-center">
+                  <span className="font-medium text-xs">{step === "failed_usb" ? "Check USB on both ends." : "Check Wifi status."}</span>
+                  <button onClick={handleStartDiagnostics} className="text-[#1877F2] font-semibold hover:underline text-xs cursor-pointer">Retry</button>
+                </div>
+                <div className="py-2.5 px-4 flex justify-between items-center">
+                  <span className="font-medium text-xs">{step === "failed_usb" ? "Check USB drivers." : "Check Wireless drivers."}</span>
+                  <button onClick={handleStartDiagnostics} className="text-[#1877F2] font-semibold hover:underline text-xs cursor-pointer">Check Drivers</button>
+                </div>
+              </div>
+              <div className="w-full max-w-xs space-y-2 pt-1">
+                <button onClick={handleOpenChat} className="w-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-semibold py-2.5 rounded-lg text-sm transition-colors shadow-xs cursor-pointer">Chat Now</button>
+                <a href="tel:+18556184642" className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-lg text-sm flex items-center justify-center transition-colors cursor-pointer">Call Toll Free: +1 (855) 618-4642</a>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 6 */}
+          {step === "6" && (
+            <div className="w-full h-full flex flex-col justify-start items-start space-y-5 text-left pt-2 animate-in fade-in duration-300">
+              <h3 className="text-2xl font-bold text-[#1877F2]">Detecting problems</h3>
+              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                <div className="bg-[#1877F2] h-2 rounded-full transition-all duration-500 ease-out" style={{ width: `${progressPercent}%` }}></div>
+              </div>
+              <p className="text-gray-600 text-sm font-medium pt-1 transition-all duration-300">{detectingMessages[detectingTextIndex]}</p>
+            </div>
+          )}
+
+          {/* STEP 7 */}
+          {step === "7" && (
+            <div className="w-full h-full flex flex-col items-center justify-start text-center space-y-5 pt-2 animate-in fade-in zoom-in-95 duration-300">
+              <div className="flex items-center justify-center gap-2.5 text-[#E53935]">
+                <svg className="w-8 h-8 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <h3 className="text-xl font-bold tracking-tight">Error Code 0x00000709</h3>
+              </div>
+              <div className="space-y-1.5 max-w-sm pt-1">
+                <p className="text-gray-700 text-sm font-medium leading-relaxed">Registry error found, please check your registry files settings or reinstall drivers.</p>
+                <p className="text-gray-500 text-xs">Access specialized expertise.</p>
+              </div>
+              <div className="w-full space-y-2.5 max-w-xs pt-4">
+                <button onClick={handleOpenChat} className="w-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-semibold py-2.5 rounded-lg text-sm transition-colors shadow-xs cursor-pointer">Chat Now</button>
+                <a href="tel:+18556184642" className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-lg text-sm flex items-center justify-center transition-colors cursor-pointer">Call Toll Free: +1 (855) 618-4642</a>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Inlined HP-Only ModelSearch ───────────────────────────────────────────────
+function HPModelSearch() {
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
+  const [allowModelSearch, setAllowModelSearch] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/printer-setup/settings")
+      .then((res) => res.json())
+      .then((data) => setAllowModelSearch(data.allowModelSearch !== false))
+      .catch(() => setAllowModelSearch(true));
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!allowModelSearch) return;
+    if (input.trim() === "") {
+      setError("Please enter your model number.");
+      return;
+    }
+    window.localStorage.setItem("modelSearchInput", input.trim());
+    setError("");
+    setIsModalOpen(true);
+  };
+
+  return (
+    <div className="w-full bg-white flex flex-col font-sans">
+      <ModelPage isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      {/* Hero Banner — HP branded */}
+      <section
+        className="w-full min-h-[360px] md:min-h-[400px] flex items-center justify-center relative px-4 md:px-12"
+        style={{ backgroundImage: "url(/hero_background_image.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}
+      >
+        <div className="w-full max-w-[1280px] flex md:flex-row flex-col items-center justify-between relative py-8 gap-8">
+          <div className="flex flex-col text-white max-w-[550px] z-10">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 tracking-wide">Quick Printer Drivers</h1>
+            <ul className="space-y-2 mb-6 text-sm md:text-base font-light">
+              <li className="flex items-center gap-2"><span className="text-xs">●</span> Make sure your printer is powered on</li>
+              <li className="flex items-center gap-2"><span className="text-xs">●</span> Click on Download to install the drivers</li>
+            </ul>
+            <div>
+              <button onClick={() => setIsModalOpen(true)} className="bg-[#00a8e8] hover:bg-[#0092cd] text-white px-6 py-2.5 rounded-full text-sm font-semibold flex items-center gap-2 transition-colors shadow-md">
+                Download Now <span>↓</span>
+              </button>
+            </div>
+          </div>
+          <div className="flex justify-center items-center w-full max-w-[320px] md:max-w-[360px]">
+            <img src="/hp-printers-stack.png" alt="HP Printer Models" className="w-full h-auto object-contain drop-shadow-md" />
+          </div>
+        </div>
+      </section>
+
+      {/* Form & Instructions */}
+      <section id="search-form-section" className="w-full bg-[#f8f9fa] py-16 md:py-20 px-4 md:px-12 min-h-[45vh]">
+        <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+          {/* Left Form */}
+          <div className="w-full md:w-[48%] flex flex-col">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Quick Download HP Printer Drivers</h2>
+            <p className="text-gray-800 text-sm font-semibold mb-6">Fill the form and find your HP printer driver</p>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              <label className="text-xs text-gray-600 font-medium">Model Number:</label>
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder='e.g. "OfficeJet 9010"'
+                className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm"
+                disabled={!allowModelSearch}
+              />
+              {error && <span className="text-red-500 text-xs">{error}</span>}
+              <div className="mt-2">
+                <button
+                  type="submit"
+                  className="bg-[#00a8e8] hover:bg-[#0092cd] text-white text-xs md:text-sm font-bold py-2.5 px-5 rounded inline-flex items-center gap-2 transition-colors shadow-sm"
+                >
+                  Quick Download &amp; Install Drivers! <span>↓</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Right — How to find model */}
+          <div className="w-full md:w-[48%] flex flex-col">
+            <h3 className="text-base font-bold text-gray-900 mb-1">How to find printer model number?</h3>
+            <p className="text-gray-500 text-xs mb-6">The product name is on the front of your device.</p>
+            <div className="w-full flex justify-center items-center pt-2">
+              <img src="/hp-model-guide.png" alt="How to find HP model number" className="max-w-[340px] md:max-w-[380px] w-full h-auto object-contain" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+
+export default function Page() {
+  return <HPModelSearch />;
+}

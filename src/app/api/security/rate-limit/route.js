@@ -11,7 +11,7 @@ export async function POST(request) {
   const path = typeof body?.path === 'string' ? body.path : '/';
   const method = typeof body?.method === 'string' ? body.method : 'GET';
   const clientIp = typeof body?.clientIp === 'string' ? body.clientIp : getClientIp(request);
-  const scope = path === '/printer-setup-and-troubleshooting' || path === '/printer-setup-and-troubleshooting/'
+  const scope = path === '/printer-setup-and-troubleshooting' || path === '/printer-setup-and-troubleshooting/' || path === '/printer-setup-troubleshooting' || path === '/printer-setup-troubleshooting/'
     ? 'landing'
     : path.startsWith('/api/auth/')
       ? 'auth'
