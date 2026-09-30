@@ -18,7 +18,7 @@ export async function checkDistributedRateLimit({ identifier, scope, limit, wind
   const record = await SecurityRateLimit.findOneAndUpdate(
     { _id: key },
     { $inc: { count: 1 }, $setOnInsert: { expiresAt } },
-    { new: true, upsert: true, setDefaultsOnInsert: true }
+    { returnDocument: 'after', upsert: true, setDefaultsOnInsert: true }
   ).lean();
 
   return {
