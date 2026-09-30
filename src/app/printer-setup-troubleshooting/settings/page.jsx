@@ -1,17 +1,17 @@
-import SettingsManagement from '@/components/printer-setup/SettingsManagement';
+import HPSettingsManagement from './HPSettingsManagement';
 
 export const metadata = {
-  title: 'Printer Setup Settings | Admin Dashboard',
+  title: 'HP Printer Setup Settings | Admin Dashboard',
   robots: {
     index: false,
     follow: false,
   },
 };
 
-export default function AdminPrinterSettingsPage() {
+export default function HPAdminSettingsPage() {
   return (
     <div className="p-6">
-      <SettingsManagement />
+      <HPSettingsManagement />
     </div>
   );
 }

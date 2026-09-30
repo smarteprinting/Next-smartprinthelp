@@ -1,24 +1,18 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
-import PrinterHeader from '@/components/printer-setup/PrinterHeader';
+import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function ClientLayout({ children }) {
-    const [showLogo, setShowLogo] = useState(false);
-    const [showHeader, setShowHeader] = useState(false);
-    const [settingsLoaded, setSettingsLoaded] = useState(false);
     const [allowStartNow, setAllowStartNow] = useState(true);
     const pathname = usePathname();
-    const router = useRef(useRouter());
+    const router = useRouter();
 
     // Fetch settings only once on mount
     useEffect(() => {
-        const fetchHeader = async () => {
+        const fetchSettings = async () => {
             try {
-                const res = await fetch('/api/printer-setup/settings');
+                const res = await fetch('/api/hp-setup/settings');
                 const data = await res.json();
-                setShowHeader(data.showHeader === true);
-                setShowLogo(data.showLogo === true);
                 setAllowStartNow(data.allowStartNow !== false);
 
                 const isRootPath = pathname === '/printer-setup-troubleshooting' || pathname === '/printer-setup-troubleshooting/';
@@ -26,32 +20,16 @@ export default function ClientLayout({ children }) {
 
                 // Redirect to root if start now is disabled and user is on a subpage
                 if (data.allowStartNow === false && !isRootPath && !isSettingsPath) {
-                    router.current.push('/printer-setup-troubleshooting/');
+                    router.push('/printer-setup-troubleshooting/');
                 }
             } catch (error) {
-                console.error('Failed to fetch settings:', error);
-                setShowHeader(false);
-                setShowLogo(false);
-            } finally {
-                setSettingsLoaded(true);
+                console.error('Failed to fetch HP settings:', error);
             }
         };
 
-        fetchHeader();
-    }, [pathname]);
+        fetchSettings();
+    }, [pathname, router]);
 
-    const isRootPath = pathname === '/printer-setup-troubleshooting' || pathname === '/printer-setup-troubleshooting/';
-    const isSettingsPath = pathname?.startsWith('/printer-setup-troubleshooting/settings');
-    const shouldHideHeader = isRootPath || isSettingsPath;
-
-    const shouldRenderChildren = isRootPath || isSettingsPath || (settingsLoaded && allowStartNow);
-
-    return (
-        <div className="flex flex-col min-h-screen">
-            {!shouldHideHeader && showHeader && <PrinterHeader showLogo={showLogo} />}
-            <div className="flex-grow">
-                {shouldRenderChildren ? children : null}
-            </div>
-        </div>
-    );
+    // Just render children normally - no conditional rendering
+    return <>{children}</>;
 }

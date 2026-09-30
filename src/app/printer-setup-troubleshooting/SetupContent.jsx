@@ -1,11 +1,28 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const SetupContent = () => {
   const router = useRouter();
+  const [allowStartNow, setAllowStartNow] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/hp-setup/settings')
+      .then(res => res.json())
+      .then(data => setAllowStartNow(data.allowStartNow !== false))
+      .catch(() => setAllowStartNow(true));
+  }, []);
+
   const triggerAssistance = () => {
-    router.push('/printer-setup-troubleshooting/model-search');
+    if (allowStartNow) {
+      router.push('/printer-setup-troubleshooting/model-search');
+    } else {
+      if (window.jivo_api && typeof window.jivo_api.open === 'function') {
+        window.jivo_api.open();
+      } else {
+        alert('Chat support is currently unavailable.');
+      }
+    }
   };
 
   return (

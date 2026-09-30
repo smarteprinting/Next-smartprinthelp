@@ -142,5 +142,46 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Handle printer-setup-troubleshooting routes (HP setup - independent flow)
+  const isRootPathHP = pathname === '/printer-setup-troubleshooting' || pathname === '/printer-setup-troubleshooting/';
+  const isSettingsPathHP = pathname.startsWith('/printer-setup-troubleshooting/settings');
+
+  if (isRootPathHP || isSettingsPathHP) {
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith('/printer-setup-troubleshooting/')) {
+    try {
+      const apiUrl = new URL('/api/hp-setup/settings', req.url);
+      const res = await fetch(apiUrl, {
+        method: 'GET',
+        headers: { 
+          'x-hp-settings-check': '1',
+          'x-middleware-internal': 'true',
+          'Accept': 'application/json'
+        },
+        cache: 'no-store',
+      });
+      
+      if (!res.ok) {
+        return NextResponse.next();
+      }
+
+      // Verify the response is JSON before parsing
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.warn('HP setup settings API returned non-JSON response, skipping check');
+        return NextResponse.next();
+      }
+
+      const data = await res.json();
+      if (data.allowStartNow === false) {
+        return NextResponse.redirect(new URL('/printer-setup-troubleshooting/', req.url));
+      }
+    } catch (error) {
+      console.error('HP setup middleware error:', error);
+    }
+  }
+
   return NextResponse.next();
 }

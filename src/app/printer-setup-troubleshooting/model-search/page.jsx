@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import Header from "./Header";
+import Footer from "./Footer";
 
 // ─── Inlined ModelPage Modal ───────────────────────────────────────────────────
 const RECAPTCHA_SCRIPT_URL = "https://www.google.com/recaptcha/api.js?render=";
@@ -434,5 +436,11 @@ function HPModelSearch() {
 
 
 export default function Page() {
-  return <HPModelSearch />;
+  return (
+    <>
+      <Header />
+      <HPModelSearch />
+      <Footer />
+    </>
+  );
 }

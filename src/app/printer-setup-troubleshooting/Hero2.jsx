@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const slides = [
@@ -17,6 +17,26 @@ const slides = [
 const Hero2 = () => {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [allowStartNow, setAllowStartNow] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/hp-setup/settings')
+      .then(res => res.json())
+      .then(data => setAllowStartNow(data.allowStartNow !== false))
+      .catch(() => setAllowStartNow(true));
+  }, []);
+
+  const handleGetStarted = () => {
+    if (allowStartNow) {
+      router.push("/printer-setup-troubleshooting/model-search");
+    } else {
+      if (window.jivo_api && typeof window.jivo_api.open === 'function') {
+        window.jivo_api.open();
+      } else {
+        alert('Chat support is currently unavailable.');
+      }
+    }
+  };
 
   const handleScrollTo = (id) => {
     const el = document.getElementById(id);
@@ -113,11 +133,7 @@ const Hero2 = () => {
             >
               {/* PRIMARY BUTTON */}
               <button
-                onClick={() =>
-                  router.push(
-                    "/printer-setup-troubleshooting/model-search"
-                  )
-                }
+                onClick={handleGetStarted}
                 className="
                   w-full
                   sm:w-auto
