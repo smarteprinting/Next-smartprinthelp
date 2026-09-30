@@ -51,7 +51,7 @@ const ProfilePage = () => {
                 setEmail(user.email);
             }
         }
-    }, [dispatch, navigate, userInfo, user, success]);
+    }, [dispatch, router, userInfo, user, success]);
 
     useEffect(() => {
         if (success) {
