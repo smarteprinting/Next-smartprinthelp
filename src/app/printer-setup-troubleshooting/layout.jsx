@@ -4,7 +4,7 @@ import Script from 'next/script';
 export const metadata = {
   metadataBase: new URL('https://www.smartprinthelp.com'),
   title: {
-    default: 'HP Printer Setup & HP Smart Help | Smart Print Help',
+    default: 'HP Printer Setup & HP Smart Help',
     template: '%s | Smart Print Help',
   },
   description:
