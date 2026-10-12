@@ -86,7 +86,10 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <hr className="border-gray-700" />
         <div className="flex flex-col sm:flex-row items-center justify-between py-6 gap-4">
-          <p className="text-gray-400 text-sm">Copyright © 2026 Smart Print Help All rights reserved</p>
+          <p className="text-gray-400 text-sm">
+            Copyright © 2026 Smart Print Help. Owned and Operated by SMART
+            EPRINTING LLC. All Rights Reserved.
+          </p>
           <div className="flex items-center gap-2">
             <Image src="https://img.icons8.com/color/38/paypal.png" alt="PayPal" width={28} height={28} className="object-contain" />
             <Image src="https://img.icons8.com/color/38/visa.png" alt="Visa" width={28} height={28} className="object-contain" />

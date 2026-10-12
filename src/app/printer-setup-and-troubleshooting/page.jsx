@@ -1,8 +1,8 @@
 import Home from '@/components/printer-setup/Home';
 
 export const metadata = {
-  title: 'Printer Setup, Offline Fix and Troubleshooting',
-  description: 'Step-by-step setup assistant to configure your new printer, download latest driver packages, connect to Wi-Fi, and resolve printer offline status. Setup support for HP, Canon, Epson, and Brother printers.',
+  title: 'Printer Setup Help | Connect Printer & Fix Offline Issues',
+  description: 'Get printer setup help to connect your printer to a computer or WiFi, install drivers, and troubleshoot offline or connection issues with step-by-step guidance.',
   keywords: [
     'printer setup', 'download printer drivers', 'install printer software', 
     'wireless printer setup', 'connect printer to wifi', 'fix printer offline', 
