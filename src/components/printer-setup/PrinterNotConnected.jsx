@@ -66,12 +66,12 @@ function PrinterNotConnected() {
       className="w-full bg-white px-4 py-14 sm:px-6 sm:py-16"
     >
       <div className="mx-auto max-w-6xl">
-        <h2
-          id="printer-errors-heading"
-          className="text-center text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
-        >
-          Printer Not Connecting? Troubleshoot Common Printer Errors
-        </h2>
+     <h2
+  id="printer-errors-heading"
+  className="text-center text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+>
+  Printer Not Connecting? Troubleshoot Common Printer Errors.
+</h2>
 
         <div className="mt-10 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
           {commonErrors.map(({ title, description }) => (

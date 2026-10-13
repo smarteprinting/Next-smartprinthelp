@@ -51,12 +51,12 @@ function ConnectPrinterToComputer() {
     >
       <div className="mx-auto max-w-6xl">
         <header className="mx-auto max-w-4xl text-center">
-          <h2
-            id="connect-printer-heading"
-            className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
-          >
-            Connect Printer to Computer – Windows &amp; Mac Setup Guide
-          </h2>
+        <h2
+  id="connect-printer-heading"
+  className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+>
+  Connect Printer to Computer – Windows &amp; Mac Setup Guide
+</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
             Trying to add a printer to your computer but cannot find the
             device? Many printers connect through USB or WiFi, and some office

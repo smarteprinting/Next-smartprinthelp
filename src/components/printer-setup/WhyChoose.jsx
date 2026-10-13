@@ -32,12 +32,12 @@ function WhyChoose() {
       className="w-full bg-slate-50 px-4 py-14 sm:px-6 sm:py-16"
     >
       <div className="mx-auto max-w-6xl">
-        <h2
-          id="why-choose-heading"
-          className="text-center text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
-        >
-          Why Choose Smart Print Help for Printer Guidance?
-        </h2>
+     <h2
+  id="why-choose-heading"
+  className="text-center text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+>
+  Why Choose Smart Print Help for Printer Guidance?
+</h2>
 
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {guidancePoints.map(({ text, Icon }) => (

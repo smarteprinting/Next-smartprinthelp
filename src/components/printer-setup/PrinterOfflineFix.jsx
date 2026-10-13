@@ -43,12 +43,12 @@ function PrinterOfflineFix() {
     >
       <div className="mx-auto max-w-6xl">
         <header className="mx-auto max-w-4xl text-center">
-          <h2
-            id="printer-offline-heading"
-            className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
-          >
-            Printer Offline Fix – Why Is My Printer Offline?
-          </h2>
+         <h2
+  id="printer-offline-heading"
+  className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+>
+  Printer Offline Fix – Why Is My Printer Offline?
+</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
             A printer may show offline even while powered on because the
             computer cannot communicate with it or believes it is unavailable.

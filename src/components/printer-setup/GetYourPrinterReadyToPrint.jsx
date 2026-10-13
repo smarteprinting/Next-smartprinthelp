@@ -44,11 +44,11 @@ function GetYourPrinterReadyToPrint() {
       <div className="mx-auto max-w-6xl">
         <header className="mx-auto max-w-4xl text-center">
           <h2
-            id="printer-setup-guide-heading"
-            className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
-          >
-            Printer Setup Help – Get Your Printer Ready to Print
-          </h2>
+  id="printer-setup-guide-heading"
+  className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+>
+  Printer Setup Help – Get Your Printer Ready to Print
+</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
             Setting up a printer involves more than connecting the power cable.
             Your printer must be correctly configured, connected to your

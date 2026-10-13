@@ -88,12 +88,12 @@ const FAQSection = () => {
             <span>HELP CENTER</span>
           </div>
 
-          <h2
-            id="faq-heading"
-            className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
-          >
-            Frequently Asked Questions
-          </h2>
+       <h2
+  id="faq-heading"
+  className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"
+>
+  Frequently Asked Questions
+</h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
             Find answers to common printer setup, connectivity, driver

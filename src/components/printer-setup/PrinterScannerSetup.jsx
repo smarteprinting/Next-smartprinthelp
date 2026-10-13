@@ -43,12 +43,12 @@ function PrinterScannerSetup() {
     >
       <div className="mx-auto max-w-6xl">
         <header className="mx-auto max-w-4xl text-center">
-          <h2
-            id="printer-scanner-setup-heading"
-            className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
-          >
-            Printer &amp; Scanner Setup – Configure Your Device
-          </h2>
+         <h2
+  id="printer-scanner-setup-heading"
+  className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+>
+  Printer &amp; Scanner Setup – Configure Your Device
+</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
             Multifunction printers combine printing and scanning. Scanning may
             require separate software or permissions even when printing

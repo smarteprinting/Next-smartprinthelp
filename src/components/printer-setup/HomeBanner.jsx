@@ -52,13 +52,15 @@ const HomeBanner = () => {
         <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,60fr)_minmax(0,40fr)] lg:gap-12">
           {/* Left Column: All Text Content & Primary Buttons (~60% width) */}
           <div className="min-w-0">
+
             <h1
               id="printer-setup-banner-heading"
-              className="text-3xl font-extrabold leading-tight tracking-tight text-slate-950 sm:text-4xl lg:text-5xl"
+              className="text-2xl font-extrabold leading-tight tracking-tight text-slate-950 sm:text-3xl lg:text-4xl"
             >
               Printer Setup Help – Connect, Install &amp; Troubleshoot Your
               Printer
             </h1>
+
 
             <p className="mt-5 text-base leading-8 text-slate-700">
               Need help setting up a new printer or fixing a connection issue?
@@ -99,7 +101,7 @@ const HomeBanner = () => {
           {/* Right Column: Image Banner (~40% width) */}
           <div className="flex w-full items-center justify-center min-w-0 lg:justify-end">
             <img
-              src="/contttt.webp"
+              src="/whatmakesus.webp"
               alt="Printer Setup Help and Troubleshooting illustration"
               className="w-full h-auto max-w-sm rounded-2xl object-contain object-center shadow-xl shadow-blue-900/5 lg:max-w-md"
             />

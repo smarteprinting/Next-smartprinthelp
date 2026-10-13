@@ -43,12 +43,12 @@ function ConnectPrinterToWifi() {
     >
       <div className="mx-auto max-w-6xl">
         <header className="mx-auto max-w-4xl text-center">
-          <h2
-            id="connect-printer-wifi-heading"
-            className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
-          >
-            Connect Printer to WiFi – Wireless Printer Setup Guide
-          </h2>
+         <h2
+  id="connect-printer-wifi-heading"
+  className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+>
+  Connect Printer to WiFi – Wireless Printer Setup Guide
+</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
             Wireless setup lets compatible computers and mobile devices print
             without a direct USB cable. An incorrect network password, weak

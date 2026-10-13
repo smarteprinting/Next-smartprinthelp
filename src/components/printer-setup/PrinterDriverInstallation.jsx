@@ -43,12 +43,12 @@ function PrinterDriverInstallation() {
     >
       <div className="mx-auto max-w-6xl">
         <header className="mx-auto max-w-4xl text-center">
-          <h2
-            id="printer-driver-installation-heading"
-            className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
-          >
-            Printer Driver Installation &amp; Software Setup
-          </h2>
+         <h2
+  id="printer-driver-installation-heading"
+  className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+>
+  Printer Driver Installation &amp; Software Setup
+</h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
             Drivers and supporting software help the computer recognize the
             printer and access available functions. Modern operating systems
