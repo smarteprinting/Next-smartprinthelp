@@ -180,14 +180,14 @@ export default function RootLayout({ children }) {
               if ('requestIdleCallback' in window) {
                 requestIdleCallback(function() {
                   var s = document.createElement('script');
-                  s.src = '//code.jivosite.com/widget/XjQJxqMY0d';
+                  s.src = '//code.jivosite.com/widget/jnhsn3P8fW';
                   s.async = true;
                   document.body.appendChild(s);
                 });
               } else {
                 setTimeout(function() {
                   var s = document.createElement('script');
-                  s.src = '//code.jivosite.com/widget/XjQJxqMY0d';
+                  s.src = '//code.jivosite.com/widget/jnhsn3P8fW';
                   s.async = true;
                   document.body.appendChild(s);
                 }, 3000);
