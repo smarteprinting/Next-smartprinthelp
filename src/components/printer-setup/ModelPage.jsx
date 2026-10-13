@@ -74,7 +74,7 @@ export default function ModelPage({ isOpen, onClose }) {
     return () => {};
   }, [isOpen, step]);
 
-  // Fire conversion event when error page (step 7) is displayed
+
   useEffect(() => {
     if (step === "7" && typeof window !== "undefined" && typeof gtag === "function") {
       gtag('event', 'conversion', {

@@ -7,7 +7,9 @@ import FAQSection from './FAQSection';
 import FinalConversion from './FinalConversion';
 import TrademarkNotice from './TrademarkNotice';
 import Footer from '@/components/Footer';
+import ButtomContent1 from "./ButtomContent1";
 import SetupHeader from './SetupHeader';
+import SetupCTA from "./SetupCTA"
 
 function Home() {
   return (
@@ -15,24 +17,15 @@ function Home() {
     
       {/* <HomeHero /> */}
 
-     <SetupHeader />
+     {/* <SetupHeader /> */}
       <Hero2 />
 
      
-      <IssueSelectionCards />
+     <ButtomContent1 />
 
-   
-      <SetupContent />
+<FAQSection />
 
-    
-      <FAQSection />
-
-    
-      <FinalConversion />
-
-   
-      <TrademarkNotice />
-
+<SetupCTA />
     
       <Footer />
     </div>

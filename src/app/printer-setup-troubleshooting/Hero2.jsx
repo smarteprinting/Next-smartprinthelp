@@ -1,189 +1,243 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Printer,
+  Wrench,
+  Power,
+  Download,
+  Wifi,
+  AlertTriangle,
+  FileImage,
+} from "lucide-react";
+import { openSetupChat } from "./chatSupport";
 
-const slides = [
-  {
-    image: "/slide-1.png",
-    alt: "Printer Setup Illustration 1",
-  },
-  {
-    image: "/slide-2.png",
-    alt: "Printer Setup Illustration 2",
-  },
-];
-
-const Hero2 = () => {
+export default function Hero2() {
   const router = useRouter();
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [allowStartNow, setAllowStartNow] = useState(true);
 
   useEffect(() => {
-    fetch('/api/hp-setup/settings')
-      .then(res => res.json())
-      .then(data => setAllowStartNow(data.allowStartNow !== false))
+    fetch("/api/hp-setup/settings")
+      .then((res) => res.json())
+      .then((data) => setAllowStartNow(data.allowStartNow !== false))
       .catch(() => setAllowStartNow(true));
   }, []);
 
-  const handleGetStarted = () => {
+  const openModelSearch = () => {
     if (allowStartNow) {
       router.push("/printer-setup-troubleshooting/model-search");
-    } else {
-      if (window.jivo_api && typeof window.jivo_api.open === 'function') {
-        window.jivo_api.open();
-      } else {
-        alert('Chat support is currently unavailable.');
-      }
+      return;
     }
-  };
 
-  const handleScrollTo = (id) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+    openSetupChat();
   };
 
   return (
-    <section className="relative w-full bg-gradient-to-b from-slate-50/50 via-white to-white text-slate-900 overflow-hidden border-b border-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 items-center min-h-[380px] lg:min-h-[400px] gap-8 py-6">
+    <div className="w-full bg-[#f4f6f9] min-h-screen flex flex-col justify-between">
+      {/* =========================================
+          HERO BANNER (TOP SECTION)
+      ========================================= */}
+      <section
+        className="w-full py-12 sm:py-16 md:py-20 flex flex-col items-center justify-center relative px-4 text-center text-white overflow-hidden shrink-0"
+        style={{
+          backgroundImage: "url('/hero_background_image.webp')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+  
 
-          {/* LEFT CONTENT */}
-          <div className="lg:col-span-7 py-6 lg:py-10 text-center lg:text-left">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[32px] xl:text-[34px] font-black tracking-tight text-slate-900 mb-5 leading-[1.15]">
-              Printer Setup Help &amp;{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#024bd8] to-blue-600">
-                Troubleshooting
-              </span>
-            </h1>
+        <div className="relative z-10 max-w-[1000px] mx-auto flex flex-col items-center justify-center h-full">
+          {/* Main Title */}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight mb-3 drop-shadow-md">
+            Smart Printer Setup & Troubleshooting
+          </h1>
 
-            <p className="text-sm sm:text-base md:text-[17px] text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-4 font-normal">
-              Need help setting up your printer or getting it connected again?
-              Find straightforward guidance for HP printer setup, HP Smart
-              setup, WiFi connections, printer offline issues, adding a printer
-              to your computer, driver installation, and other common printer
-              problems.
-            </p>
+          {/* Subtitle - Single line on large screens */}
+          <p className="text-xs sm:text-sm md:text-base text-blue-50 font-normal max-w-[800px] lg:max-w-none lg:whitespace-nowrap leading-relaxed mb-7 drop-shadow">
+            Setup, offline errors, WiFi drops, driver issues — guided solutions that get you printing again in minutes.
+          </p>
 
-            <p className="text-xs sm:text-sm text-slate-500 font-medium mb-6">
-              Choose what you need help with below to get started.
-            </p>
+          {/* Hero Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto px-4 sm:px-0">
+            <button
+              type="button"
+              onClick={openModelSearch}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#10b981] hover:bg-[#059669] text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5 rounded-full shadow-lg transition-all duration-200 transform hover:scale-105"
+            >
+              <Printer size={18} />
+              Quick Setup
+            </button>
 
-            {/* BUTTONS */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5">
-              {/* PRIMARY BUTTON */}
-              <button
-                onClick={handleGetStarted}
-                className="w-full sm:w-auto px-7 py-3 rounded-xl bg-[#024bd8] hover:bg-[#023fb5] active:scale-[0.98] text-white font-semibold text-sm transition-all duration-200 shadow-sm shadow-blue-500/20 hover:shadow-md hover:shadow-blue-500/30 cursor-pointer flex items-center justify-center gap-2 group"
-              >
-                <span>Click Here for Printer Setup</span>
-                <svg
-                  className="w-4 h-4 transition-transform duration-200 group-hover:translate-y-0.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.5"
-                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                  />
-                </svg>
-              </button>
+            <button
+              type="button"
+              onClick={openModelSearch}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#10b981] hover:bg-[#059669] text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5 rounded-full shadow-lg transition-all duration-200 transform hover:scale-105"
+            >
+              <Wrench size={18} />
+              Easy Troubleshooting
+            </button>
+          </div>
+        </div>
+      </section>
 
-              {/* SECONDARY BUTTON */}
-              <button
-                onClick={handleGetStarted}
-                className="w-full sm:w-auto px-7 py-3 rounded-xl bg-white hover:bg-slate-50 active:scale-[0.98] text-slate-800 border border-slate-200/80 hover:border-slate-300 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer flex items-center justify-center gap-2"
-              >
-                <span>Troubleshoot an Issue</span>
-                <svg
-                  className="w-4 h-4 text-[#024bd8]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.5"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </button>
+      {/* =========================================
+          ISSUE SELECTOR GRID (BOTTOM SECTION)
+      ========================================= */}
+      <section className="w-full max-w-[1220px] mx-auto px-4 sm:px-6 py-10 sm:py-14 md:py-16 flex-1 flex flex-col justify-center">
+        {/* Section Heading */}
+        <div className="text-center mb-8 sm:mb-10">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#111827]">
+            Choose Your Issue
+          </h2>
+          <p className="text-gray-600 text-xs sm:text-sm mt-2 font-medium">
+            Select an option below for smart printer setup and troubleshooting.
+          </p>
+        </div>
+
+        {/* Grid Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+          
+          {/* Card 1: New Printer Setup */}
+          <div className="bg-white rounded-[2rem] p-7 sm:p-8 border-2 border-gray-200/90 shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between items-start text-left">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#eef4ff] text-[#0052cc] flex items-center justify-center mb-5">
+                <Printer size={24} />
+              </div>
+              <h3 className="text-base sm:text-lg font-extrabold text-[#0052cc] mb-2">
+                New Printer Setup
+              </h3>
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                New printer in the box? Go from unboxed to first print without the hassle.
+              </p>
             </div>
+            <button
+              type="button"
+              onClick={openModelSearch}
+              className="w-full bg-[#0052cc] hover:bg-[#003e99] text-white font-extrabold text-xs uppercase tracking-wider py-3.5 px-4 rounded-xl transition-colors duration-200 shadow-md text-center"
+            >
+              Start Printer Setup
+            </button>
           </div>
 
-          {/* RIGHT SLIDER */}
-          <div className="lg:col-span-5 relative flex items-center justify-center py-4 lg:py-0">
-            <div className="relative w-full max-w-md bg-gradient-to-b from-blue-50/40 to-slate-50/50 border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center justify-center">
-
-              {/* PREVIOUS ARROW */}
-              <button
-                onClick={prevSlide}
-                aria-label="Previous slide"
-                className="absolute left-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-slate-700 hover:text-[#024bd8] shadow-sm border border-slate-100 transition-all duration-200 cursor-pointer"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-
-              {/* IMAGE CONTAINER */}
-              <div className="w-full h-[220px] sm:h-[250px] lg:h-[270px] flex items-center justify-center px-6">
-                <img
-                  src={slides[currentIndex].image}
-                  alt={slides[currentIndex].alt}
-                  className="w-full h-full object-contain transition-all duration-500 ease-in-out select-none drop-shadow-sm"
-                />
+          {/* Card 2: Printer Shows Offline */}
+          <div className="bg-white rounded-[2rem] p-7 sm:p-8 border-2 border-gray-200/90 shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between items-start text-left">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#eef4ff] text-[#0052cc] flex items-center justify-center mb-5">
+                <Power size={24} />
               </div>
-
-              {/* NEXT ARROW */}
-              <button
-                onClick={nextSlide}
-                aria-label="Next slide"
-                className="absolute right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-slate-700 hover:text-[#024bd8] shadow-sm border border-slate-100 transition-all duration-200 cursor-pointer"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-
-              {/* SLIDER DOTS INDICATOR (Added for better UX) */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
-                {slides.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentIndex(index)}
-                    aria-label={`Go to slide ${index + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      currentIndex === index ? "w-6 bg-[#024bd8]" : "w-1.5 bg-slate-300 hover:bg-slate-400"
-                    }`}
-                  />
-                ))}
-              </div>
-
+              <h3 className="text-base sm:text-lg font-extrabold text-[#0052cc] mb-2">
+                Printer Shows Offline
+              </h3>
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                Printer showing offline again? Get it back online in minutes — for good.
+              </p>
             </div>
+            <button
+              type="button"
+              onClick={openModelSearch}
+              className="w-full bg-[#0052cc] hover:bg-[#003e99] text-white font-extrabold text-xs uppercase tracking-wider py-3.5 px-4 rounded-xl transition-colors duration-200 shadow-md text-center"
+            >
+              Fix Offline Printer
+            </button>
+          </div>
+
+          {/* Card 3: Install Printer Drivers */}
+          <div className="bg-white rounded-[2rem] p-7 sm:p-8 border-2 border-gray-200/90 shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between items-start text-left">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#eef4ff] text-[#0052cc] flex items-center justify-center mb-5">
+                <Download size={24} />
+              </div>
+              <h3 className="text-base sm:text-lg font-extrabold text-[#0052cc] mb-2">
+                Install Printer Drivers
+              </h3>
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                Wrong or outdated drivers? Get the exact match for your model installed.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={openModelSearch}
+              className="w-full bg-[#0052cc] hover:bg-[#003e99] text-white font-extrabold text-xs uppercase tracking-wider py-3.5 px-4 rounded-xl transition-colors duration-200 shadow-md text-center"
+            >
+              Install Printer Drivers
+            </button>
+          </div>
+
+          {/* Card 4: WiFi Connection Drops */}
+          <div className="bg-white rounded-[2rem] p-7 sm:p-8 border-2 border-gray-200/90 shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between items-start text-left">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#eef4ff] text-[#0052cc] flex items-center justify-center mb-5">
+                <Wifi size={24} />
+              </div>
+              <h3 className="text-base sm:text-lg font-extrabold text-[#0052cc] mb-2">
+                WiFi Connection Drops
+              </h3>
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                Tired of your printer vanishing from WiFi? Lock in a connection that lasts.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={openModelSearch}
+              className="w-full bg-[#0052cc] hover:bg-[#003e99] text-white font-extrabold text-xs uppercase tracking-wider py-3.5 px-4 rounded-xl transition-colors duration-200 shadow-md text-center"
+            >
+              Fix Connectivity Issue
+            </button>
+          </div>
+
+          {/* Card 5: Error Codes / Not Detected */}
+          <div className="bg-white rounded-[2rem] p-7 sm:p-8 border-2 border-gray-200/90 shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between items-start text-left">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#eef4ff] text-[#0052cc] flex items-center justify-center mb-5">
+                <AlertTriangle size={24} />
+              </div>
+              <h3 className="text-base sm:text-lg font-extrabold text-[#0052cc] mb-2">
+                Error Codes / Not Detected
+              </h3>
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                Flashing lights or cryptic errors? Get a real diagnosis, not guesswork.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={openModelSearch}
+              className="w-full bg-[#0052cc] hover:bg-[#003e99] text-white font-extrabold text-xs uppercase tracking-wider py-3.5 px-4 rounded-xl transition-colors duration-200 shadow-md text-center"
+            >
+              Diagnose Printer Error
+            </button>
+          </div>
+
+          {/* Card 6: Scanner Not Working */}
+          <div className="bg-white rounded-[2rem] p-7 sm:p-8 border-2 border-gray-200/90 shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between items-start text-left">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#eef4ff] text-[#0052cc] flex items-center justify-center mb-5">
+                <FileImage size={24} />
+              </div>
+              <h3 className="text-base sm:text-lg font-extrabold text-[#0052cc] mb-2">
+                Scanner Not Working?
+              </h3>
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                Blank scans or streaky pages? Bring back crisp, clean prints today.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={openModelSearch}
+              className="w-full bg-[#0052cc] hover:bg-[#003e99] text-white font-extrabold text-xs uppercase tracking-wider py-3.5 px-4 rounded-xl transition-colors duration-200 shadow-md text-center"
+            >
+              Fix Scanner Issue
+            </button>
           </div>
 
         </div>
-      </div>
-    </section>
-  );
-};
 
-export default Hero2;
+        {/* Footer Help Text */}
+        <div className="text-center mt-10 sm:mt-12 text-xs sm:text-sm text-[#111827] font-semibold px-2">
+          Need more help? Connect with our live chat support team for quick assistance.
+        </div>
+      </section>
+    </div>
+  );
+}

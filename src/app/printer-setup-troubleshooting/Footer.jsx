@@ -4,32 +4,27 @@ const Footer = () => {
   return (
     <footer className="bg-[#232222] text-white w-full pt-12 pb-6">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-5 gap-12">
-        {/* About Us */}
+        {/* About Smart Print Help */}
         <div>
           <h3 className="text-xl font-bold mb-2 tracking-wide border-b border-white pb-1">
-            About Us
+            Smart Print Help
           </h3>
           <ul className="space-y-2 text-base">
-            <li>Contact HP</li>
-            <li>Careers</li>
-            <li>Investor relations</li>
-            <li>Sustainable impact</li>
-            <li>Press center</li>
-            <li>The Garage</li>
+            <li>Printer setup guidance</li>
+            <li>WiFi connection help</li>
+            <li>Printer troubleshooting</li>
           </ul>
         </div>
 
-        {/* Ways To Buy */}
+        {/* Printer Setup */}
         <div>
           <h3 className="text-xl font-bold mb-2 tracking-wide border-b border-white pb-1">
-            Ways To Buy
+            Printer Setup
           </h3>
           <ul className="space-y-2 text-base">
-            <li>Shop online</li>
-            <li>Call a HP rep</li>
-            <li>Find a reseller</li>
-            <li>Enterprise store</li>
-            <li>Public sector purchasing</li>
+            <li>New printer setup</li>
+            <li>Connect a printer to WiFi</li>
+            <li>Install printer drivers</li>
           </ul>
         </div>
 
@@ -39,28 +34,21 @@ const Footer = () => {
             Support
           </h3>
           <ul className="space-y-2 text-base">
-            <li>Download drivers</li>
-            <li>Support & troubleshooting</li>
-            <li>Community</li>
-            <li>Register your product</li>
-            <li>Authorized service providers</li>
-            <li>Check repair status</li>
-            <li>Training & certification</li>
-            <li>Fraud alert</li>
-            <li>Security Center</li>
+            <li>Printer offline help</li>
+            <li>Printing troubleshooting</li>
+            <li>Scanner troubleshooting</li>
           </ul>
         </div>
 
-        {/* HP Partners */}
+        {/* Printer Help */}
         <div>
           <h3 className="text-xl font-bold mb-2 tracking-wide border-b border-white pb-1">
-            HP Partners
+            Printer Help
           </h3>
           <ul className="space-y-2 text-base">
-            <li>HP Amplify</li>
-            <li>Partner Program</li>
-            <li>HP Partner Portal</li>
-            <li>Developers</li>
+            <li>Printer showing offline</li>
+            <li>Printer not printing</li>
+            <li>Printer driver installation</li>
           </ul>
         </div>
 
@@ -70,17 +58,12 @@ const Footer = () => {
             Useful Links
           </h3>
           <ul className="space-y-2 text-base">
-            <li>Recalls</li>
-            <li>Product recycling</li>
-            <li>Accessibility</li>
-            <li>CA Supply Chains Act</li>
-            <li>Site Map</li>
+            <li>Printer setup information</li>
+            <li>WiFi connection information</li>
+            <li>Driver installation information</li>
+            <li>Scanner help</li>
             <li>Privacy</li>
-            <li>Use of cookies</li>
-            <li>Personal data rights</li>
             <li>Terms of use</li>
-            <li>Limited warranty statement</li>
-            <li>Terms & conditions of sales & service</li>
           </ul>
         </div>
       </div>
@@ -91,7 +74,7 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row items-center justify-between py-6 gap-4">
           <p className="text-gray-400 text-sm">
-            © Copyright 2026 HP
+            © Copyright 2026 Smart Print Help
           </p>
 
           <form className="flex items-center gap-2">

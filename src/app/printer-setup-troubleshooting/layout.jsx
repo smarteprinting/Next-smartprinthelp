@@ -194,13 +194,6 @@ const jsonLdSchema = {
 export default function PrinterSetupLayout({ children }) {
   return (
     <>
-      {/* ClickCease Script */}
-      <Script
-        id="clickcease-script"
-        src="https://ob.sornavellon.com/i/6cd83818f302977b2729291478f5574c.js"
-        strategy="afterInteractive"
-      />
-
       {/* Google tag (gtag.js) */}
       <Script
         id="gtag-js"
@@ -224,15 +217,6 @@ export default function PrinterSetupLayout({ children }) {
           __html: JSON.stringify(jsonLdSchema),
         }}
       />
-
-      <noscript>
-        <iframe
-          src="https://ob.sornavellon.com/ns/6cd83818f302977b2729291478f5574c.html?ch="
-          width="0"
-          height="0"
-          style={{ display: 'none' }}
-        ></iframe>
-      </noscript>
 
       <ClientLayout>{children}</ClientLayout>
     </>
