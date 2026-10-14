@@ -1,16 +1,9 @@
 "use client";
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
 
 export default function InstallationFailedPage() {
-    const printer = localStorage.getItem('modelSearchInput') || '';
-
     return (
         <>
-            <Helmet>
-                <title>Printer Driver Installation Error</title>
-                <meta name="robots" content="noindex, nofollow" />
-            </Helmet>
             <div
                 className="md:min-h-[91vh] min-h-screen flex flex-col justify-center items-center bg-cover bg-center px-2"
                 style={{
