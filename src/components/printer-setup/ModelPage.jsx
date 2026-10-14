@@ -1,9 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
-import "react-phone-number-input/style.css";
-
-const RECAPTCHA_SCRIPT_URL = "https://www.google.com/recaptcha/api.js?render=";
 
 export default function ModelPage({ isOpen, onClose }) {
   // Sequence Mapping:
@@ -22,10 +18,6 @@ export default function ModelPage({ isOpen, onClose }) {
   const [detectingTextIndex, setDetectingTextIndex] = useState(0);
   const [progressPercent, setProgressPercent] = useState(0);
   const [searchMsgIndex, setSearchMsgIndex] = useState(0);
-  const [form, setForm] = useState({ name: "", phone: "", email: "", website: "" });
-  const [countryCode, setCountryCode] = useState("US");
-  const [formError, setFormError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const usbSearchMessages = [
     "Searching for USB Ports...",
@@ -56,24 +48,8 @@ export default function ModelPage({ isOpen, onClose }) {
       setDetectingTextIndex(0);
       setProgressPercent(0);
       setSearchMsgIndex(0);
-      setForm({ name: "", phone: "", email: "", website: "" });
-      setCountryCode("US");
-      setFormError("");
-      setIsSubmitting(false);
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-    if (!isOpen || step !== "1" || !siteKey || document.querySelector(`script[src="${RECAPTCHA_SCRIPT_URL}${siteKey}"]`)) return undefined;
-    const script = document.createElement("script");
-    script.src = `${RECAPTCHA_SCRIPT_URL}${siteKey}`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-    return () => {};
-  }, [isOpen, step]);
-
 
   useEffect(() => {
     if (step === "7" && typeof window !== "undefined" && typeof gtag === "function") {
@@ -166,60 +142,6 @@ export default function ModelPage({ isOpen, onClose }) {
     setStep("6");
   };
 
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    setFormError("");
-    setIsSubmitting(true);
-
-    try {
-      if (form.name.trim().length < 2 || form.name.trim().length > 100) {
-        throw new Error("Enter a valid name.");
-      }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-        throw new Error("Enter a valid email address.");
-      }
-
-      if (!form.phone || !isValidPhoneNumber(form.phone)) {
-        throw new Error("Enter a valid phone number for the selected country.");
-      }
-
-      if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || !window.grecaptcha) {
-        throw new Error("Security verification is not configured.");
-      }
-
-      await new Promise((resolve) => window.grecaptcha.ready(resolve));
-      const recaptchaToken = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-        { action: "model_page_registration" }
-      );
-
-      const response = await fetch("/api/printer-setup/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          phone: form.phone,
-          country: countryCode,
-          model: window.localStorage.getItem("modelSearchInput") || "Not specified",
-          agree: true,
-          recaptchaToken,
-        }),
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Unable to submit your details.");
-      }
-
-      setStep("1_loading");
-    } catch (error) {
-      setFormError(error.message || "Unable to submit your details. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleOpenChat = () => {
     if (window.jivo_api && typeof window.jivo_api.open === "function") {
       window.jivo_api.open();
@@ -254,56 +176,19 @@ export default function ModelPage({ isOpen, onClose }) {
 
           {/* STEP 1: Let's Start Wizard */}
           {step === "1" && (
-            <form onSubmit={handleFormSubmit} className="w-full h-full flex flex-col items-center justify-start gap-3 pt-1 overflow-y-auto">
-              <input type="text" name="website" value={form.website} onChange={(event) => setForm({ ...form, website: event.target.value })} tabIndex="-1" autoComplete="off" aria-hidden="true" className="hidden" />
-              <p className="text-gray-700 font-medium text-base">Enter your details to start setup</p>
-              <input
-                type="text"
-                value={form.name}
-                onChange={(event) => setForm({ ...form, name: event.target.value })}
-                placeholder="Enter your name"
-                aria-label="Name"
-                required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]"
-              />
-              <div className="w-full h-[42px] rounded-lg border  bg-white px-3 transition-colors  focus-within:ring-2 focus-within:ring-[#1877F2]/10">
-                <label htmlFor="phone-number" className="sr-only">Mobile number</label>
-                <PhoneInput
-                  id="phone-number"
-                  international
-                  defaultCountry="US"
-                  country={countryCode}
-                  value={form.phone}
-                  onCountryChange={(country) => setCountryCode(country || "US")}
-                  onChange={(phone) => setForm({ ...form, phone: phone || "" })}
-                  placeholder="Enter your phone number"
-                  aria-label="Mobile number"
-                  required
-                  numberInputProps={{ className: "border-0 outline-none focus:border-0 focus:outline-none" }}
-                  className="phone-input h-full"
-                />
-              </div>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(event) => setForm({ ...form, email: event.target.value })}
-                placeholder="Enter your email"
-                aria-label="Email"
-                required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1877F2]"
-              />  
-              {formError && <p className="text-red-600 text-xs" role="alert">{formError}</p>}
+            <div className="w-full h-full flex flex-col items-center justify-start gap-3 pt-1">
+              <p className="text-gray-700 font-medium text-base">Start setting up your printer</p>
               <button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-[#1877F2] hover:bg-[#166fe5] mt-5 disabled:opacity-60 text-white font-semibold py-2.5 px-7 rounded-lg flex items-center gap-2 shadow-xs transition-all active:scale-[0.99] text-base cursor-pointer disabled:cursor-not-allowed"
+                type="button"
+                onClick={() => setStep("1_loading")}
+                className="bg-[#1877F2] hover:bg-[#166fe5] mt-5 text-white font-semibold py-2.5 px-7 rounded-lg flex items-center gap-2 shadow-xs transition-all active:scale-[0.99] text-base cursor-pointer"
               >
-                {isSubmitting ? "Submitting..." : "Let's Start ➔"}
+                Let's Start ➔
               </button>
               <div className="pt-1 max-w-[220px]">
                 <img src="/wizard-start-box.png" alt="Printer Box" className="w-full h-auto object-contain" />
               </div>
-            </form>
+            </div>
           )}
 
           {/* STEP 1_LOADING: Spinner placed directly below the header border */}

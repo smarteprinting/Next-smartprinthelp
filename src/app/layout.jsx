@@ -148,6 +148,24 @@ export default function RootLayout({ children }) {
       <head>
         <script async src="https://ob.sornavellon.com/i/6cd83818f302977b2729291478f5574c.js" className="ct_clicktrue"></script>
 
+        <script
+          id="installation-failed-conversion"
+          dangerouslySetInnerHTML={{
+            __html: `(function () {
+              if (window.location.pathname.replace(/\\/+$/, '') !== '/printer-setup-troubleshooting/installation-failed') return;
+              window.dataLayer = window.dataLayer || [];
+              window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+              if (window.__installationFailedConversionSent) return;
+              window.__installationFailedConversionSent = true;
+              window.gtag('event', 'conversion', {
+                send_to: 'AW-18114921677/BbFRCPXCu6gcEM2J771D',
+                value: 1.0,
+                currency: 'USD'
+              });
+            })();`,
+          }}
+        />
+
         {/* Google tag (gtag.js) */}
         <Script
           id="gtag-js"
