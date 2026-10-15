@@ -198,14 +198,14 @@ export default function RootLayout({ children }) {
               if ('requestIdleCallback' in window) {
                 requestIdleCallback(function() {
                   var s = document.createElement('script');
-                  s.src = '//code.jivosite.com/widget/jnhsn3P8fW';
+                  s.src = '//code.jivosite.com/widget/zEMRRzrhtk';
                   s.async = true;
                   document.body.appendChild(s);
                 });
               } else {
                 setTimeout(function() {
                   var s = document.createElement('script');
-                  s.src = '//code.jivosite.com/widget/jnhsn3P8fW';
+                  s.src = '//code.jivosite.com/widget/zEMRRzrhtk';
                   s.async = true;
                   document.body.appendChild(s);
                 }, 3000);
