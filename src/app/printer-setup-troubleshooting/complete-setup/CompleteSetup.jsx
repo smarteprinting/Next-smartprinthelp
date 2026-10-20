@@ -35,7 +35,7 @@ function CompleteSetup({ showCompleteSetup }) {
       <div className="w-full min-h-screen bg-white flex flex-col">
         {/* Top blue section */}
         <section
-          className="w-full min-h-[560px] flex items-start justify-center relative px-[6%] overflow-hidden"
+          className="w-full min-h-[560px] flex items-start justify-center relative overflow-hidden"
           style={{
             height: '560px',
             backgroundImage: 'url(/hero_background_image.webp)',
@@ -43,8 +43,8 @@ function CompleteSetup({ showCompleteSetup }) {
             backgroundPosition: 'center',
           }}
         >
-          <div className="w-full max-w-[1200px] flex flex-col md:flex-row items-start justify-between relative h-full">
-            <div className="flex flex-col justify-center h-full w-full max-w-[700px] pt-8">
+          <div className="w-full max-w-[1200px] mx-auto px-4 flex flex-col 2xl:flex-row items-start justify-between relative h-full">
+            <div className="flex flex-col justify-center h-full w-full max-w-[700px] 2xl:w-[72%] pt-8">
               <h1 className="text-white text-3xl md:text-[2.6rem] font-bold mb-8 leading-tight drop-shadow-lg">Complete setup using HP Smart App</h1>
               <p className="text-white text-lg md:text-xl mb-6 font-normal drop-shadow whitespace-normal">
                 HP Smart App will connect the printer to your computer, install print drivers, and set up scanning features (if applicable)
@@ -70,13 +70,12 @@ function CompleteSetup({ showCompleteSetup }) {
                 <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Microsoft Store" className="h-10 object-contain hover:opacity-80 transition cursor-pointer" />
               </div>
             </div>
-            <div className="hidden md:flex flex-col items-center h-full absolute right-0 bottom-0 z-10">
+            <div className="hidden 2xl:flex w-[25%] h-full flex-col items-center justify-center z-10">
               <div className="relative flex flex-col items-center">
                 <img
                   src="/hp-printer-software.png"
                   alt="HP Printer Software"
                   className="h-[180px] w-auto max-w-none drop-shadow-2xl"
-                  style={{ marginTop: '220px' }}
                 />
 
                 <span className="absolute left-1/2 -translate-x-1/2 bottom-2 text-white text-xs font-bold drop-shadow bg-black/40 px-3 py-1 rounded-full whitespace-nowrap">
@@ -88,7 +87,7 @@ function CompleteSetup({ showCompleteSetup }) {
         </section>
 
         {/* Lower white section */}
-        <div className="w-full max-w-[1200px] mx-auto mt-16 px-4 md:px-0">
+        <div className="w-full max-w-[1200px] mx-auto mt-16 px-4">
           <div className="flex flex-col w-full max-w-[900px]">
             <div className="flex md:flex-row flex-col md:items-center items-start mb-3 gap-3">
               <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">

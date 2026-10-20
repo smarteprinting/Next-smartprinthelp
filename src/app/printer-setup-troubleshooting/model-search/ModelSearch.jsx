@@ -21,7 +21,7 @@ const ModelSearch = () => {
     return (
         <div className="w-full min-h-screen bg-white flex flex-col">
             <section
-                className="w-full min-h-[420px] flex items-center justify-center relative md:px-[6%] px-2 sm:px-3 overflow-hidden"
+                className="w-full min-h-[420px] flex items-center justify-center relative overflow-hidden"
                 style={{ height: '420px' }}
             >
                 <picture>
@@ -35,14 +35,14 @@ const ModelSearch = () => {
                         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', zIndex: 0 }}
                     />
                 </picture>
-                <div className="w-full max-w-[1200px] flex md:flex-row flex-col items-center md:justify-between justify-start relative z-10 h-full">
-                    <div className="flex flex-col justify-center h-full w-full max-w-[700px] pt-8 md:pt-0" id="model-search-main-content">
+                <div className="w-full max-w-[1200px] mx-auto px-4 flex flex-col lg:flex-row items-center lg:justify-between justify-start relative z-10 h-full">
+                    <div className="flex flex-col justify-center h-full w-full max-w-[700px] lg:w-[60%] pt-8 md:pt-0" id="model-search-main-content">
                         <h1 className="text-white text-2xl sm:text-3xl md:text-[2.7rem] font-normal mb-6 md:mb-8 leading-tight drop-shadow-lg">Set up your printer</h1>
                         <p className="text-white text-base sm:text-lg md:text-xl mb-6 md:mb-8 font-normal leading-snug drop-shadow">
                             Enter your product name and model number to get the right smart software
                             and drivers for you
                         </p>
-                        <form className="flex flex-col md:flex-row items-center w-full max-w-[600px] gap-3 md:gap-0" onSubmit={handleSubmit}>
+                        <form className="flex flex-col lg:flex-row items-center w-full max-w-[600px] gap-3 lg:gap-0" onSubmit={handleSubmit}>
                             <input
                                 type="text"
                                 value={input}
@@ -52,7 +52,7 @@ const ModelSearch = () => {
                             />
                             <button
                                 type="submit"
-                                className="md:ml-4 ml-0 bg-white text-blue-700 font-semibold px-8 py-3 rounded-full text-base sm:text-lg shadow hover:bg-blue-50 transition w-full md:w-auto min-w-[120px]"
+                                className="lg:ml-4 ml-0 bg-white text-blue-700 font-semibold px-8 py-3 rounded-full text-base sm:text-lg shadow hover:bg-blue-50 transition w-full lg:w-auto min-w-[120px]"
                             >
                                 Search
                             </button>
@@ -60,18 +60,17 @@ const ModelSearch = () => {
                         {error && <div className="text-red-500 text-sm mt-2 text-left">{error}</div>}
                     </div>
                     
-                    {/* Vertically centered image container using items-center */}
-                    <div className="hidden md:flex items-center absolute right-8 inset-y-0 z-10 pointer-events-none">
+                    <div className="hidden lg:flex w-[35%] h-full items-center justify-center z-10 pointer-events-none">
                         <img
                             src="/printer-without-bg.png"
                             alt="Printer and Devices"
-                            className="h-[100px] sm:h-[130px] md:h-[160px] w-auto max-w-none drop-shadow-xl"
+                            className="w-full max-w-[360px] h-auto max-h-[180px] object-contain drop-shadow-xl"
                         />
                     </div>
                 </div>
             </section>
             
-            <div className="w-full max-w-[1200px] md:ml-[12%] ml-0 mt-8 md:mt-[12vh] md:px-[6%] px-2 sm:px-3 flex md:flex-row flex-col items-start justify-between relative">
+            <div className="w-full max-w-[1200px] mx-auto mt-8 md:mt-[12vh] px-4 flex md:flex-row flex-col items-start justify-between relative">
                 <div className="flex flex-col w-full max-w-[700px]">
                     <p className="text-gray-700 text-base sm:text-[1.05rem] md:text-[1.15rem] mb-4 md:mb-6">
                         Install smart software and drivers on each mobile device or computer that you want to print from. Add the printer on the new device.

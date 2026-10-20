@@ -6,8 +6,8 @@ const SetupHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="w-full h-20 bg-white py-4 flex items-center md:px-[18%] px-4 border-b border-gray-100 shadow-sm relative z-50">
-      <nav className="w-full max-w-5xl flex items-center justify-between md:justify-start">
+    <header className="w-full h-20 bg-white py-4 flex items-center border-b border-gray-100 shadow-sm relative z-50">
+      <nav className="w-full max-w-[1200px] mx-auto px-4 flex items-center justify-between md:justify-start">
         <div className="flex items-center">
           <img 
             src="/hp-logo.svg" 
